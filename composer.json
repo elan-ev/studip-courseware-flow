@@ -1,0 +1,23 @@
+{
+    "name": "elan-ev/courseware-flow",
+    "version": "0.1",
+    "type": "project",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Ron Lucke",
+            "email": "lucke@elan-ev.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Datenerfassung\\classes\\": "lib/classes/",
+            "Datenerfassung\\models\\": "lib/models/",
+            "Datenerfassung\\JsonApi\\": "lib/JsonApi/"
+        }
+    },
+    "require": {
+        "php": "^7.0 || ^8.0",
+        "guzzlehttp/guzzle": ">=7.5.1"
+    }
+}

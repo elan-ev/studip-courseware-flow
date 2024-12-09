@@ -1,0 +1,7 @@
+pluginname=CoursewareFlow
+displayname=CoursewareFlow
+pluginclassname=CoursewareFlow
+origin=elan-ev
+version=0.1
+studipMinVersion=5.3
+studipMaxVersion=5.5.99
