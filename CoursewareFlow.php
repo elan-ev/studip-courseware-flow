@@ -5,7 +5,7 @@ use JsonApi\Contracts\JsonApiPlugin;
 use CoursewareFlow\JsonApi\Routes;
 use CoursewareFlow\JsonApi\Schemas;
 
-class CoursewareFlow extends StudIPPlugin implements SystemPlugin, JsonApiPlugin
+class CoursewareFlow extends StudIPPlugin implements StandardPlugin, SystemPlugin, JsonApiPlugin
 {
     use Routes;
     use Schemas;
@@ -38,10 +38,28 @@ class CoursewareFlow extends StudIPPlugin implements SystemPlugin, JsonApiPlugin
 
     public function getPluginName()
     {
-        return 'CoursewareFlow';
+        return 'Courseware Flow';
     }
 
     public function getInfoTemplate($courseId)
+    {
+        return null;
+    }
+
+    public function getTabNavigation($courseId)
+    {
+        $tabs = array();
+
+        $nav = new Navigation($this->getPluginName(),PluginEngine::getURL($this, [], 'index'));
+        $tabs['coursewareflow'] = $nav;
+        $nav->addSubNavigation('index', new Navigation(
+            'Übersicht',
+            PluginEngine::getURL($this, [], 'index')
+        ));
+        return $tabs;
+    }
+
+    public function getIconNavigation($courseId, $last_visit, $user_id)
     {
         return null;
     }

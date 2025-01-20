@@ -11,9 +11,9 @@
     ],
     "autoload": {
         "psr-4": {
-            "Datenerfassung\\classes\\": "lib/classes/",
-            "Datenerfassung\\models\\": "lib/models/",
-            "Datenerfassung\\JsonApi\\": "lib/JsonApi/"
+            "CoursewareFlow\\classes\\": "lib/classes/",
+            "CoursewareFlow\\models\\": "lib/models/",
+            "CoursewareFlow\\JsonApi\\": "lib/JsonApi/"
         }
     },
     "require": {
