@@ -10,34 +10,34 @@ const contextStore = useContextStore();
 const emit = defineEmits(['update:open']);
 
 const courseSearch = computed(() => contextStore.courseSearch);
-const currentUnit = computed(() => contextStore.selectedUnit);
+const currentFlow = computed(() => contextStore.selectedFlow);
 
 const addCourse = (value) => {
     console.log(value);
 };
 
-const addFlow = () => {
-    console.log('add flow');
-    console.log(currentUnit.value);
+const updateFlow = () => {
+    console.log('update flow');
+    console.log(currentFlow.value);
     emit('update:open', false);
 };
 
 </script>
 
 <template>
-        <StudipDialog
+    <StudipDialog
         :height="780"
         :width="500"
-        :title="$gettext('Verteilung hinzufügen')"
+        :title="$gettext('Verteilung bearbeiten')"
         confirm-class="accept"
         :close-text="$gettext('Abbrechen')"
-        :confirm-text="$gettext('Erstellen')"
+        :confirm-text="$gettext('Speichern')"
         :open="open"
         @update:open="updateOpen"
-        @confirm="addFlow"
+        @confirm="updateFlow"
     >
         <template #dialogContent>
-            <form class="default cw-flow-dialog-create">
+            <form class="default cw-flow-dialog-edit">
                 <label>
                     {{ $gettext('Veranstaltungssuche') }}
                     <StudipQuicksearch :searchtype="courseSearch" name="qs" @select="addCourse" :placeholder="$gettext('Suchen')"></StudipQuicksearch>
@@ -45,31 +45,4 @@ const addFlow = () => {
             </form>
         </template>
     </StudipDialog>
-    
-
 </template>
-
-<style lang="scss">
-.cw-flow-dialog-create {
-    .quicksearch_container {
-        display: flex;
-        flex-direction: column;
-
-        input[type="text"] {
-            width: 100%;
-            outline: none;
-        }
-        .dropdownmenu {
-            max-width: unset;
-            max-height: unset;
-            width: 100%;
-            top: 1px;
-
-            .autocomplete__results {
-                width: calc(100% - 4px);
-            }
-        }
-    }
-}
-
-</style>

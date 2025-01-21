@@ -30,7 +30,7 @@
       "@ckeditor/ckeditor5-vue": "^6.0.0",
       "@headlessui/vue": "^1.7.16",
       "@vitejs/plugin-vue": "^4.5.2",
-      "kitsu": "^10.1.2",
+      "kitsu": "^10.2.0",
       "sass": "^1.70.0",
       "sass-loader": "^14.0.0",
       "vite": "^5.0.8",
