@@ -16,7 +16,7 @@ class Flow extends \JsonApi\Schemas\SchemaProvider
 
     const REL_TARGET_UNIT = 'target_unit';
 
-    public function getId($resource): ?string
+    public function getId($resource): string
     {
         return $resource->id;
     }

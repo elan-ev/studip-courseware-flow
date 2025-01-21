@@ -9,19 +9,25 @@ use CoursewareFlow\models\Flow;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class FlowShow extends JsonApiController
+class FlowDelete extends JsonApiController
 {
     public function __invoke(Request $request, Response $response, $args)
     {
+
         $resource = Flow::find($args['id']);
+
         if (!$resource) {
             throw new RecordNotFoundException();
         }
+
         $user = $this->getUser($request);
-        if (!Authority::canShowFlow($user, $resource)) {
+
+        if(!Authority::canDeleteFlow($user, $resource)) {
             throw new AuthorizationFailedException();
         }
+        
+        $resource->delete();
 
-        return $this->getContentResponse($resource);
+        return $this->getCodeResponse(204);
     }
 }

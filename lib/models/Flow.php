@@ -1,6 +1,6 @@
 <?php
 
-namespace CoursewareFlow\Flow;
+namespace CoursewareFlow\models;
 
 use SimpleORMap;
 
@@ -18,6 +18,7 @@ use SimpleORMap;
  * @property string $structural_elements_map database column
  * @property string $container_map database column
  * @property string $blocks_map database column
+ * @property bool $active database column
  * @property bool $auto_sync database column
  * 
  */
@@ -54,6 +55,6 @@ class Flow extends SimpleORMap
             'foreign_key' => 'source_unit_id',
         ];
 
-
+        parent::configure($config);
     }
 }
