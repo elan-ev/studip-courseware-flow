@@ -21,7 +21,7 @@ final class InitCoursewareFlow extends Migration
             `chdate`                    INT(11) UNSIGNED NOT NULL,
 
              PRIMARY KEY (`id`),
-             INDEX index_source_unit_id (`source_unit_id`),
+             INDEX index_source_unit_id (`source_unit_id`)
             )"
         );
     }
