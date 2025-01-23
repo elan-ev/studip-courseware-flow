@@ -1,19 +1,31 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { useContextStore } from './../../../stores/context';
+import { useCoursesStore } from './../../../stores/courses';
 import StudipQuicksearch from './../../studip/StudipQuicksearch.vue';
 import StudipDialog from './../../studip/StudipDialog.vue';
 
 const contextStore = useContextStore();
+const coursesStore = useCoursesStore();
 
 const emit = defineEmits(['update:open']);
+
+const courses = ref([]);
 
 const courseSearch = computed(() => contextStore.courseSearch);
 const currentUnit = computed(() => contextStore.selectedUnit);
 
-const addCourse = (value) => {
+const addCourse = async (value) => {
+    if (value instanceof Event || !value) {
+        return;
+    }
+    
     console.log(value);
+    await coursesStore.fetchById(value);
+    const course = coursesStore.byId(value);
+    courses.value.push(course);
+    console.log(courses.value);
 };
 
 const updateOpen = (value) => {
@@ -46,6 +58,15 @@ const addFlow = () => {
                     {{ $gettext('Veranstaltungssuche') }}
                     <StudipQuicksearch :searchtype="courseSearch" name="qs" @select="addCourse" :placeholder="$gettext('Suchen')"></StudipQuicksearch>
                 </label>
+                <label>
+                    {{ $gettext('Veranstaltungen') }}
+                    <ul v-for="(course, index) in courses" :key="'course'-index">
+                        <li class="cw-flow-course-selected">
+                            <img class="cw-flow-course-avatar" :src="course.meta.avatar.small" alt="avatar" />
+                            <span class="cw-flow-course-title">{{ course.title }}</span>
+                        </li>
+                    </ul>
+                </label>
             </form>
         </template>
     </StudipDialog>
@@ -72,6 +93,23 @@ const addFlow = () => {
             .autocomplete__results {
                 width: calc(100% - 4px);
             }
+        }
+    }
+    ul {
+        padding: 0;
+    }
+    .cw-flow-course-selected {
+        list-style: none;
+        display: flex;
+        flex-direction: row;
+
+        .cw-flow-course-avatar {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        .cw-flow-course-title {
+            line-height: 24px;
         }
     }
 }
