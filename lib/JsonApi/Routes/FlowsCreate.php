@@ -42,10 +42,10 @@ class FlowsCreate extends JsonApiController
         if (!self::arrayHas($json, 'data')) {
             return 'Missing `data` member at document´s top level.';
         }
-        if (!self::arrayHas($json, 'data.source-unit-id')) {
+        if (!self::arrayHas($json, 'data.attributes.source-unit-id')) {
             return 'New document must have an `source-unit-id`.';
         }
-        if (!self::arrayHas($json, 'data.target-course-ids')) {
+        if (!self::arrayHas($json, 'data.attributes.target-course-ids')) {
             return 'New document must have `target-course-ids`.';
         }
     }
@@ -83,7 +83,7 @@ class FlowsCreate extends JsonApiController
         return $flow;
     }
 
-    private function getUnit(Request $json): ?\Courseware\Unit
+    private function getUnit($json): ?\Courseware\Unit
     {
         $unit_id = self::arrayGet($json, 'data.attributes.source-unit-id');
 
@@ -92,7 +92,7 @@ class FlowsCreate extends JsonApiController
 
     private function getTargetCourses($json): array
     {
-        $course_ids = self::arrayGet($json, 'data.target-course-ids');
+        $course_ids = self::arrayGet($json, 'data.attributes.target-course-ids');
         $courses = [];
 
         foreach ($course_ids as $course_id) {

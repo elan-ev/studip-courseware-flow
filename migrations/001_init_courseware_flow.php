@@ -13,13 +13,14 @@ final class InitCoursewareFlow extends Migration
             `structural_elements_map`   MEDIUMTEXT NOT NULL,
             `container_map`             MEDIUMTEXT NOT NULL,
             `blocks_map`                MEDIUMTEXT NOT NULL,
+            `folders_map`               MEDIUMTEXT NOT NULL,
+            `files_map`                 MEDIUMTEXT NOT NULL,
             `active`                    TINYINT(1) NOT NULL DEFAULT '1',
             `auto_sync`                 TINYINT(1) NOT NULL DEFAULT '0',
             `mkdate`                    INT(11) UNSIGNED NOT NULL,
             `chdate`                    INT(11) UNSIGNED NOT NULL,
 
              PRIMARY KEY (`id`),
-             INDEX index_source_course_id (`source_course_id`),
              INDEX index_source_unit_id (`source_unit_id`),
             )"
         );

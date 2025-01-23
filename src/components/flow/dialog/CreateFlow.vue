@@ -44,7 +44,7 @@ const addFlow = () => {
         'source-unit-id': currentUnit.value.id,
         'target-course-ids': courses.value.map((course) => course.id),
     };
-    flowsStore.createFlows({ data });
+    flowsStore.createFlows(data);
     emit('update:open', false);
 };
 

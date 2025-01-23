@@ -62,10 +62,9 @@ export const useFlowsStore = defineStore(
         async function createFlows(data) {
             inProgress.value = true;
             return api
-            .post(`/courseware-flows/create-flows`, {
-                params: {
-                    data: data,
-                },
+            .create(`/courseware-flows/create-flows`, {
+                'source-unit-id': data['source-unit-id'],
+                'target-course-ids': data['target-course-ids'],
             })
             .then(({ data }) => {
                 data.forEach(storeRecord);
