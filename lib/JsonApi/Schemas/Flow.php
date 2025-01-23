@@ -43,6 +43,17 @@ class Flow extends \JsonApi\Schemas\SchemaProvider
         ]
         : [self::RELATIONSHIP_DATA => null];
 
+        $source_unit = $resource->source_unit;
+
+        $relationships[self::REL_SOURCE_UNIT] = $source_unit
+        ? [
+            self::RELATIONSHIP_LINKS => [
+                Link::RELATED => $this->createLinkToResource($source_unit),
+            ],
+            self::RELATIONSHIP_DATA => $source_unit,
+        ]
+        : [self::RELATIONSHIP_DATA => null];
+
 
         $target_course = $resource->target_course;
 
@@ -52,6 +63,17 @@ class Flow extends \JsonApi\Schemas\SchemaProvider
                 Link::RELATED => $this->createLinkToResource($target_course),
             ],
             self::RELATIONSHIP_DATA => $target_course,
+        ]
+        : [self::RELATIONSHIP_DATA => null];
+
+        $target_unit = $resource->target_unit;
+
+        $relationships[self::REL_TARGET_UNIT] = $target_unit
+        ? [
+            self::RELATIONSHIP_LINKS => [
+                Link::RELATED => $this->createLinkToResource($target_unit),
+            ],
+            self::RELATIONSHIP_DATA => $target_unit,
         ]
         : [self::RELATIONSHIP_DATA => null];
 
