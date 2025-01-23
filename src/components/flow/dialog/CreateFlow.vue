@@ -3,11 +3,14 @@ import { computed, ref } from 'vue';
 
 import { useContextStore } from './../../../stores/context';
 import { useCoursesStore } from './../../../stores/courses';
+import { useFlowsStore } from './../../../stores/flows';
 import StudipQuicksearch from './../../studip/StudipQuicksearch.vue';
 import StudipDialog from './../../studip/StudipDialog.vue';
+import StudipIcon from './../../studip/StudipIcon.vue';
 
 const contextStore = useContextStore();
 const coursesStore = useCoursesStore();
+const flowsStore = useFlowsStore();
 
 const emit = defineEmits(['update:open']);
 
@@ -20,21 +23,28 @@ const addCourse = async (value) => {
     if (value instanceof Event || !value) {
         return;
     }
-    
-    console.log(value);
     await coursesStore.fetchById(value);
     const course = coursesStore.byId(value);
     courses.value.push(course);
-    console.log(courses.value);
+};
+
+const removeCourse = (id) => {
+    courses.value = courses.value.filter((course) => course.id !== id);
 };
 
 const updateOpen = (value) => {
     emit('update:open', value);
+    if (!value) {
+        courses.value = [];
+    }
 };
 
 const addFlow = () => {
-    console.log('add flow');
-    console.log(currentUnit.value);
+    const data = {
+        'source-unit-id': currentUnit.value.id,
+        'target-course-ids': courses.value.map((course) => course.id),
+    };
+    flowsStore.createFlows({ data });
     emit('update:open', false);
 };
 
@@ -60,10 +70,13 @@ const addFlow = () => {
                 </label>
                 <label>
                     {{ $gettext('Veranstaltungen') }}
-                    <ul v-for="(course, index) in courses" :key="'course'-index">
+                    <ul v-for="course in courses" :key="course.id">
                         <li class="cw-flow-course-selected">
                             <img class="cw-flow-course-avatar" :src="course.meta.avatar.small" alt="avatar" />
                             <span class="cw-flow-course-title">{{ course.title }}</span>
+                            <button @click="removeCourse(course.id)">
+                                <StudipIcon shape="trash" :size="20" />
+                            </button>
                         </li>
                     </ul>
                 </label>
@@ -110,6 +123,10 @@ const addFlow = () => {
         }
         .cw-flow-course-title {
             line-height: 24px;
+        }
+        button {
+            border: none;
+            background: none;
         }
     }
 }

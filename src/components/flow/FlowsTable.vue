@@ -71,11 +71,6 @@ const distributeUnit = (unit) => {
     contextStore.setSelectedUnit(unit);
     emit('create-flow');
 };
-
-const showData = () => {
-    console.log('show data');
-    console.log(noneDistributedUnits.value);
-};
 </script>
 
 <template>
@@ -117,7 +112,7 @@ const showData = () => {
             </tbody>
         </table>
 
-        <table class="default" @click="showData">
+        <table class="default">
             <caption>
                 {{
                     $gettext('Nicht verteilte Lernmaterialien')

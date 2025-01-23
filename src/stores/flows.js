@@ -6,7 +6,7 @@ export const useFlowsStore = defineStore(
     'courseware-flows',
     () => {
         const records = ref(new Map());
-        const isLoading = ref(false);
+        const inProgress = ref(false);
         const errors = ref(false);
         
         function storeRecord(newRecord) {
@@ -26,7 +26,7 @@ export const useFlowsStore = defineStore(
         }
 
         async function fetchById(id) {
-            isLoading.value = true;
+            inProgress.value = true;
             try {
                 const { data } = await api.fetch(`courseware-flows/${id}`, {
                     params: {
@@ -38,11 +38,11 @@ export const useFlowsStore = defineStore(
                 console.error('fetching flow', err);
                 errors.value = err;
             }
-            isLoading.value = false;
+            inProgress.value = false;
         }
 
         async function fetchUnitsFlows(unitId) {
-            isLoading.value = true;
+            inProgress.value = true;
             return api
             .fetch(`units/${unitId}/courseware-flows`, {
                 params: {
@@ -51,7 +51,7 @@ export const useFlowsStore = defineStore(
             })
             .then(({ data }) => {
                 data.forEach(storeRecord);
-                isLoading.value = false;
+                inProgress.value = false;
             })
             .catch((err) => {
                 console.error('fetching units flows', err);
@@ -59,14 +59,33 @@ export const useFlowsStore = defineStore(
             });
         }
 
+        async function createFlows(data) {
+            inProgress.value = true;
+            return api
+            .post(`/courseware-flows/create-flows`, {
+                params: {
+                    data: data,
+                },
+            })
+            .then(({ data }) => {
+                data.forEach(storeRecord);
+                inProgress.value = false;
+            })
+            .catch((err) => {
+                console.error('creating flows', err);
+                errors.value = err;
+            });
+        }
+
         return {
             records,
-            isLoading,
+            inProgress,
             errors,
             all,
             byId,
             fetchById,
             fetchUnitsFlows,
+            createFlows
         };
     }
 );

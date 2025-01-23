@@ -1,5 +1,6 @@
 <?php
 
+
 namespace CoursewareFlow\JsonApi\Routes;
 
 use JsonApi\Routes\ValidationTrait;
@@ -12,7 +13,7 @@ use CoursewareFlow\models\Flow;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class FlowsCreate extends JsonApiController
+class FlowCreate extends JsonApiController
 {
     use ValidationTrait;
 
@@ -20,11 +21,10 @@ class FlowsCreate extends JsonApiController
     {
         $json = $this->validate($request);
         $user = $this->getUser($request);
-
         $source_unit = $this->getUnit($json);
-        $target_courses = $this->getTargetCourses($json);
+        $target_course = $this->getTargetCourse($json);
 
-        if (!$source_unit) {
+        if (!$target_course) {
             throw new RecordNotFoundException();
         }
 
@@ -32,7 +32,7 @@ class FlowsCreate extends JsonApiController
             throw new AuthorizationFailedException();
         }
 
-        $resource = $this->createFlow($json, $source_unit, $target_courses, $user);
+        $resource = $this->createFlow($json, $source_unit, $target_course, $user);
 
         return $this->getCreatedResponse($resource);
     }
@@ -42,32 +42,21 @@ class FlowsCreate extends JsonApiController
         if (!self::arrayHas($json, 'data')) {
             return 'Missing `data` member at document´s top level.';
         }
-        if (!self::arrayHas($json, 'data.source-unit-id')) {
-            return 'New document must have an `source-unit-id`.';
+        if (!self::arrayHas($json, 'data.attributes.tool-id')) {
+            return 'New document must not have an `tool-id`.';
         }
-        if (!self::arrayHas($json, 'data.target-course-ids')) {
-            return 'New document must have `target-course-ids`.';
+        if (!self::arrayHas($json, 'data.attributes.course-id')) {
+            return 'New document must not have an `course-id`.';
         }
     }
 
-    private function createFlow(array $json, $source_unit, $target_courses, $user): array
+    private function createFlow(array $json, $source_unit, $target_course, $user): Flow
     {
         $source_course = $source_unit->course;
 
-        $flows = [];
-
-        foreach ($target_courses as $target_course) {
-            $flows[] = $this->createFlowForCourse($source_unit, $source_course, $target_course, $user);
-        }
-
-        return $flows;
-    }
-
-    private function createFlowForCourse($source_unit, $source_course, $target_course, $user): Flow
-    {
         $target_unit = $source_unit::copy($user, $target_course->id, $target_course->range_type);
         //TODO: create own copy function to get mapping information
-    
+
         $flow = Flow::create([
             'source_course_id' => $source_course->id,
             'source_unit_id' => $source_unit->id,
@@ -90,19 +79,10 @@ class FlowsCreate extends JsonApiController
         return \Courseware\Unit::find($unit_id);
     }
 
-    private function getTargetCourses($json): array
+    private function getTargetCourse($json): ?\Course
     {
-        $course_ids = self::arrayGet($json, 'data.target-course-ids');
-        $courses = [];
+        $course_id = self::arrayGet($json, 'data.attributes.target-course-id');
 
-        foreach ($course_ids as $course_id) {
-            $target_course = \Course::find($course_id);
-            if (!$target_course) {
-                throw new RecordNotFoundException();
-            }
-            $courses[] = $target_course;
-        }
-        
-        return $courses;
+        return \Course::find($course_id);
     }
 }
