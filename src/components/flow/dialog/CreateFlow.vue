@@ -16,6 +16,10 @@ const addCourse = (value) => {
     console.log(value);
 };
 
+const updateOpen = (value) => {
+    emit('update:open', value);
+};
+
 const addFlow = () => {
     console.log('add flow');
     console.log(currentUnit.value);

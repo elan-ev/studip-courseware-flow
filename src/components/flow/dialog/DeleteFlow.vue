@@ -10,6 +10,10 @@ const emit = defineEmits(['update:open']);
 
 const currentFlow = computed(() => contextStore.selectedFlow);
 
+const updateOpen = (value) => {
+    emit('update:open', value);
+};
+
 const deleteFlow = () => {
     console.log('delete flow');
     console.log(currentFlow.value);
