@@ -4,11 +4,15 @@ import StudipActionMenu from './../studip/StudipActionMenu.vue';
 import StudipIcon from './../studip/StudipIcon.vue';
 import DialogDeleteFlow from './dialog/DeleteFlow.vue';
 import DialogEditFlow from './dialog/EditFlow.vue';
-import { useUnitsStore } from './../../stores/units.js';
-import { useContextStore } from './../../stores/context.js';
 
-const unitStore = useUnitsStore();
+import { useContextStore } from './../../stores/context.js';
+import { useFlowsStore } from './../../stores/flows.js';
+import { useUnitsStore } from './../../stores/units.js';
+
+
 const contextStore = useContextStore();
+const flowsStore = useFlowsStore();
+const unitStore = useUnitsStore();
 
 const emit = defineEmits(['create-flow']);
 
@@ -18,27 +22,16 @@ const openDeleteDialog = ref(false);
 const selectedFlow = computed(() => contextStore.selectedFlow);
 const selectedUnit = computed(() => contextStore.selectedUnit);
 
+const flows = computed(() => flowsStore.all);
 const units = computed(() => unitStore.all);
 
-const flows = computed(() => [
-    {
-        id: 1,
-        unit: {
-            id: 1,
-            name: 'Test',
-        },
-    },
-    {
-        id: 2,
-        unit: {
-            id: 2,
-            name: 'Test 2',
-        },
-    },
-]);
+
+const distributedUnits = computed(() => 
+    units.value.filter((unit) => flows.value.some((flow) => flow.source_unit.data.id === unit.id))
+);
 
 const noneDistributedUnits = computed(() =>
-    units.value.filter((unit) => !flows.value.some((flow) => flow.unit.id === unit.id))
+    units.value.filter((unit) => !flows.value.some((flow) => flow.source_unit.data.id === unit.id))
 );
 
 const updateOpenEditDialog = (state) => {
@@ -94,9 +87,18 @@ const distributeUnit = (unit) => {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="flow in flows" :key="flow.id">
-                    <td></td>
-                    <td>{{ flow.unit.name }}</td>
+                <tr v-for="unit in distributedUnits" :key="unit.id">
+                    <td>
+                        <img
+                            v-if="unit['structural-element'].data.image.meta"
+                            :src="unit['structural-element'].data.image.meta['download-url']"
+                            height="40"
+                        />
+                        <div v-else class="cw-element-image-placeholder">
+                            <StudipIcon shape="courseware" :size="36" />
+                        </div>
+                    </td>
+                    <td>{{ unit['structural-element'].data.title }}</td>
                     <td class="actions">
                         <StudipActionMenu
                             :context="$gettext('Verteiltes Lernmaterial')"
@@ -104,8 +106,8 @@ const distributeUnit = (unit) => {
                                 { id: 1, label: $gettext('Bearbeiten'), icon: 'edit', emit: 'edit' },
                                 { id: 2, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' },
                             ]"
-                            @edit="editFlow(flow)"
-                            @delete="deleteFlow(flow)"
+                            @edit="editFlow(unit)"
+                            @delete="deleteFlow(unit)"
                         />
                     </td>
                 </tr>

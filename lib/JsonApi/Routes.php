@@ -9,6 +9,7 @@ trait Routes
         $group->get('/courseware-flows', Routes\FlowsIndex::class);
         $group->get('/courseware-flows/{id}', Routes\FlowShow::class);
         $group->get('/units/{id}/courseware-flows', Routes\UnitFlowsIndex::class);
+        $group->get('/courses/{id}/courseware-flows', Routes\CourseFlowsIndex::class);
 
         $group->post('/courseware-flows', Routes\FlowCreate::class);
         $group->post('/courseware-flows/create-flows', Routes\FlowsCreate::class);

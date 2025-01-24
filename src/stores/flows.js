@@ -1,10 +1,13 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { api } from '../api.js';
+import { useContextStore } from './context';
 
 export const useFlowsStore = defineStore(
     'courseware-flows',
     () => {
+        const contextStore = useContextStore();
+
         const records = ref(new Map());
         const inProgress = ref(false);
         const errors = ref(false);
@@ -41,7 +44,7 @@ export const useFlowsStore = defineStore(
             inProgress.value = false;
         }
 
-        async function fetchUnitsFlows(unitId) {
+        async function fetchUnitFlows(unitId) {
             inProgress.value = true;
             return api
             .fetch(`units/${unitId}/courseware-flows`, {
@@ -54,10 +57,28 @@ export const useFlowsStore = defineStore(
                 inProgress.value = false;
             })
             .catch((err) => {
-                console.error('fetching units flows', err);
+                console.error('fetching unit flows', err);
                 errors.value = err;
             });
         }
+
+        async function fetchCourseFlows(courseId = contextStore.cid) {
+            inProgress.value = true;
+            return api
+            .fetch(`courses/${courseId}/courseware-flows`, {
+                params: {
+                    'page[limit]': 1000,
+                },
+            })
+            .then(({ data }) => {
+                data.forEach(storeRecord);
+                inProgress.value = false;
+            })
+            .catch((err) => {
+                console.error('fetching course flows', err);
+                errors.value = err;
+            });
+        }   
 
         async function createFlows(data) {
             inProgress.value = true;
@@ -83,7 +104,8 @@ export const useFlowsStore = defineStore(
             all,
             byId,
             fetchById,
-            fetchUnitsFlows,
+            fetchUnitFlows,
+            fetchCourseFlows,
             createFlows
         };
     }

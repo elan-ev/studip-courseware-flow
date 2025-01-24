@@ -15,6 +15,12 @@ class Authority
         return self::canCreateFlow($user, $course);
     }
 
+    public static function canIndexCourseFlows($user, $course) : Bool
+    {
+        //TODO: wer darf alles Flows anlegen und sehen?
+        return self::canCreateFlow($user, $course);
+    }
+
     public static function canShowFlow($user, $flow) : Bool
     {
         //TODO: wer darf alles Flows anlegen und sehen?

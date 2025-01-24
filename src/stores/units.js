@@ -44,10 +44,10 @@ export const useUnitsStore = defineStore(
             isLoading.value = false;
         }
 
-        async function fetchCoursesUnits() {
+        async function fetchCourseUnits(courseId = contextStore.cid) {
             isLoading.value = true;
             return api
-            .fetch(`courses/${contextStore.cid}/courseware-units`, {
+            .fetch(`courses/${courseId}/courseware-units`, {
                 params: {
                     include: 'structural-element',
                     'page[limit]': 1000,
@@ -58,7 +58,7 @@ export const useUnitsStore = defineStore(
                 isLoading.value = false;
             })
             .catch((err) => {
-                console.error('fetching courses units', err);
+                console.error('fetching course units', err);
                 errors.value = err;
             })
             .finally(() => {
@@ -70,7 +70,7 @@ export const useUnitsStore = defineStore(
             all,
             byId,
             fetchById,
-            fetchCoursesUnits,
+            fetchCourseUnits,
             clearRecords,
         }
     }

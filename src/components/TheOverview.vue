@@ -4,17 +4,17 @@ import FlowsTable from './flow/FlowsTable.vue';
 import FlowsCards from './flow/FlowsCards.vue';
 import DialogCreateFlow from './flow/dialog/CreateFlow.vue';
 
-import { useUnitsStore } from './../stores/units.js';
 import { useContextStore } from './../stores/context.js';
+import { useFlowsStore } from './../stores/flows.js';
+import { useUnitsStore } from './../stores/units.js';
 
-const unitStore = useUnitsStore();
 const contextStore = useContextStore();
+const flowsStore = useFlowsStore();
+const unitStore = useUnitsStore();
 
 const openCreateDialog = ref(false);
 const showCards = ref(false);
 const showTable = ref(true);
-
-const selectedUnit = computed(() => contextStore.selectedUnit);
 
 const updateOpenCreateDialog = (state) => {
     openCreateDialog.value = state;
@@ -25,7 +25,9 @@ const updateOpenCreateDialog = (state) => {
 };
 
 onBeforeMount(() => {
-    unitStore.fetchCoursesUnits();
+    unitStore.fetchCourseUnits();
+    flowsStore.fetchCourseFlows();
+
 });
 </script>
 
