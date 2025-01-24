@@ -17,7 +17,7 @@ trait Routes
         $group->patch('/courseware-flows/{id}', Routes\FlowUpdate::class);
 
         $group->delete('/courseware-flows/{id}', Routes\FlowDelete::class);
-        //TODO: Batch delete
+        $group->post('/units/{id}/courseware-flows', Routes\UnitFlowsDelete::class);
     }
     public function registerUnauthenticatedRoutes(\Slim\Routing\RouteCollectorProxy $group)
     {

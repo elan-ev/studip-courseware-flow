@@ -2,8 +2,8 @@
 import { computed, ref } from 'vue';
 import StudipActionMenu from './../studip/StudipActionMenu.vue';
 import StudipIcon from './../studip/StudipIcon.vue';
-import DialogDeleteFlow from './dialog/DeleteFlow.vue';
-import DialogEditFlow from './dialog/EditFlow.vue';
+import DialogDeleteFlows from './dialog/DeleteFlows.vue';
+import DialogEditFlows from './dialog/EditFlows.vue';
 
 import { useContextStore } from './../../stores/context.js';
 import { useFlowsStore } from './../../stores/flows.js';
@@ -18,9 +18,6 @@ const emit = defineEmits(['create-flow']);
 
 const openEditDialog = ref(false);
 const openDeleteDialog = ref(false);
-
-const selectedFlow = computed(() => contextStore.selectedFlow);
-const selectedUnit = computed(() => contextStore.selectedUnit);
 
 const flows = computed(() => flowsStore.all);
 const units = computed(() => unitStore.all);
@@ -37,22 +34,22 @@ const noneDistributedUnits = computed(() =>
 const updateOpenEditDialog = (state) => {
     openEditDialog.value = state;
     if (!state) {
-        contextStore.setSelectedFlow(null);
+        contextStore.setSelectedUnit(null);
     }
 };
-const editFlow = (flow) => {
-    contextStore.setSelectedFlow(flow);
+const editUnitFlows = (unit) => {
+    contextStore.setSelectedUnit(unit);
     updateOpenEditDialog(true);
 };
 
 const updateOpenDeleteDialog = (state) => {
     openDeleteDialog.value = state;
     if (!state) {
-        contextStore.setSelectedFlow(null);
+        contextStore.setSelectedUnit(null);
     }
 };
-const deleteFlow = (flow) => {
-    contextStore.setSelectedFlow(flow);
+const deleteUnitFlows = (unit) => {
+    contextStore.setSelectedUnit(unit);
     updateOpenDeleteDialog(true);
 };
 
@@ -106,8 +103,8 @@ const distributeUnit = (unit) => {
                                 { id: 1, label: $gettext('Bearbeiten'), icon: 'edit', emit: 'edit' },
                                 { id: 2, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' },
                             ]"
-                            @edit="editFlow(unit)"
-                            @delete="deleteFlow(unit)"
+                            @edit="editUnitFlows(unit)"
+                            @delete="deleteUnitFlows(unit)"
                         />
                     </td>
                 </tr>
@@ -156,8 +153,8 @@ const distributeUnit = (unit) => {
             </tbody>
         </table>
 
-        <dialog-delete-flow :open="openDeleteDialog" @update:open="updateOpenDeleteDialog" />
-        <dialog-edit-flow :open="openEditDialog" @update:open="updateOpenEditDialog" />
+        <DialogDeleteFlows :open="openDeleteDialog" @update:open="updateOpenDeleteDialog" />
+        <DialogEditFlows :open="openEditDialog" @update:open="updateOpenEditDialog" />
     </div>
 </template>
 

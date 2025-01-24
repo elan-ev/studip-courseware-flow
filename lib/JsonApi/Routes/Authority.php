@@ -43,4 +43,9 @@ class Authority
     {
         return self::canUpdateFlow($user, $flow);
     }
+
+    public static function canDeleteUnitFlows($user, $unit) : Bool
+    {
+        return self::canCreateFlow($user, $unit->course);
+    }
 }

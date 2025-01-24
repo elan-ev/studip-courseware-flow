@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 
-import { useContextStore } from './../../../stores/context';
+import { useContextStore } from '../../../stores/context';
 import StudipQuicksearch from './../../studip/StudipQuicksearch.vue';
 import StudipDialog from './../../studip/StudipDialog.vue';
 
@@ -10,7 +10,7 @@ const contextStore = useContextStore();
 const emit = defineEmits(['update:open']);
 
 const courseSearch = computed(() => contextStore.courseSearch);
-const currentFlow = computed(() => contextStore.selectedFlow);
+const currentUnit = computed(() => contextStore.selectedUnit);
 
 const addCourse = (value) => {
     console.log(value);
@@ -20,9 +20,9 @@ const updateOpen = (value) => {
     emit('update:open', value);
 };
 
-const updateFlow = () => {
+const updateFlows = () => {
     console.log('update flow');
-    console.log(currentFlow.value);
+    console.log(currentUnit.value);
     emit('update:open', false);
 };
 
@@ -38,7 +38,7 @@ const updateFlow = () => {
         :confirm-text="$gettext('Speichern')"
         :open="open"
         @update:open="updateOpen"
-        @confirm="updateFlow"
+        @confirm="updateFlows"
     >
         <template #dialogContent>
             <form class="default cw-flow-dialog-edit">

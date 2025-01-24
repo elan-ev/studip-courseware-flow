@@ -97,6 +97,24 @@ export const useFlowsStore = defineStore(
             });
         }
 
+        async function deleteUnitFlows(unitId) {
+            inProgress.value = true;
+            return api
+            .post(`units/${unitId}/courseware-flows`)
+            .then(() => {
+                records.value.forEach((record) => {
+                    if (record.source_unit.data.id === unitId) {
+                        records.value.delete(record.id);
+                    }
+                });
+                inProgress.value = false;
+            })
+            .catch((err) => {
+                console.error('deleting unit flows', err);
+                errors.value = err;
+            });
+        }
+
         return {
             records,
             inProgress,
@@ -106,7 +124,8 @@ export const useFlowsStore = defineStore(
             fetchById,
             fetchUnitFlows,
             fetchCourseFlows,
-            createFlows
+            createFlows,
+            deleteUnitFlows,
         };
     }
 );

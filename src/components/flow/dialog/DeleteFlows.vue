@@ -1,22 +1,23 @@
 <script setup>
 import { computed } from 'vue';
 
-import { useContextStore } from './../../../stores/context';
+import { useContextStore } from '../../../stores/context';
+import { useFlowsStore } from '../../../stores/flows';
 import StudipDialog from '../../studip/StudipDialog.vue';
 
 const contextStore = useContextStore();
+const flowsStore = useFlowsStore();
 
 const emit = defineEmits(['update:open']);
 
-const currentFlow = computed(() => contextStore.selectedFlow);
+const currentUnit = computed(() => contextStore.selectedUnit);
 
 const updateOpen = (value) => {
     emit('update:open', value);
 };
 
-const deleteFlow = () => {
-    console.log('delete flow');
-    console.log(currentFlow.value);
+const deleteUnitFlows = () => {
+    flowsStore.deleteUnitFlows(currentUnit.value.id);
     emit('update:open', false);
 };
 </script>
@@ -24,14 +25,14 @@ const deleteFlow = () => {
 <template>
     <StudipDialog
         :height="200"
-        :title="$gettext('Verteilung löschen')"
+        :title="$gettext('Verteilungen löschen')"
         confirm-class="trash"
         :close-text="$gettext('Abbrechen')"
         :confirm-text="$gettext('Löschen')"
         :open="open"
-        :question="$gettext('Möchten Sie die Verteilung unwiderruflich löschen?')"
+        :question="$gettext('Möchten Sie die Verteilungen für dieses Lernmaterial unwiderruflich löschen?')"
         @update:open="updateOpen"
-        @confirm="deleteFlow"
+        @confirm="deleteUnitFlows"
         >
         
         </StudipDialog>
