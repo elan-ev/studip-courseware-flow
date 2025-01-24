@@ -18,7 +18,7 @@ class Authority
     public static function canShowFlow($user, $flow) : Bool
     {
         //TODO: wer darf alles Flows anlegen und sehen?
-        return $GLOBALS['perm']->have_studip_perm('tutor', $flow->source_course, $user->id);
+        return $GLOBALS['perm']->have_studip_perm('tutor', $flow->source_course_id, $user->id);
     }
 
     public static function canCreateFlow($user, $course) : Bool

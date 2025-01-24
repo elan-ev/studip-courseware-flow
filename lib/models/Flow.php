@@ -29,9 +29,11 @@ class Flow extends SimpleORMap
     {
         $config['db_table'] = 'cw_flow';
 
-        $config['serialized_fields']['structural_elements_map'] = JSONArrayObject::class;
-        $config['serialized_fields']['container_map'] = JSONArrayObject::class;
-        $config['serialized_fields']['blocks_map'] = JSONArrayObject::class;
+        // $config['serialized_fields']['structural_elements_map'] = JSONArrayObject::class;
+        // $config['serialized_fields']['container_map'] = JSONArrayObject::class;
+        // $config['serialized_fields']['blocks_map'] = JSONArrayObject::class;
+        // $config['serialized_fields']['folders_map'] = JSONArrayObject::class;
+        // $config['serialized_fields']['files_map'] = JSONArrayObject::class;
 
         $config['belongs_to']['source_course'] = [
             'class_name'  => \Course::class,
@@ -45,14 +47,14 @@ class Flow extends SimpleORMap
             'assoc_foreign_key' => 'seminar_id',
         ];
 
-        $config['belongs_to']['target_course'] = [
+        $config['belongs_to']['source_unit'] = [
             'class_name'  => \Courseware\Unit::class,
             'foreign_key' => 'source_unit_id',
         ];
 
-        $config['belongs_to']['source_course'] = [
+        $config['belongs_to']['target_unit'] = [
             'class_name'  => \Courseware\Unit::class,
-            'foreign_key' => 'source_unit_id',
+            'foreign_key' => 'target_unit_id',
         ];
 
         parent::configure($config);

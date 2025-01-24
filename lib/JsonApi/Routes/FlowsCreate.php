@@ -32,9 +32,9 @@ class FlowsCreate extends JsonApiController
             throw new AuthorizationFailedException();
         }
 
-        $resource = $this->createFlow($json, $source_unit, $target_courses, $user);
+        $resources = $this->createFlows($json, $source_unit, $target_courses, $user);
 
-        return $this->getCreatedResponse($resource);
+        return $this->getPaginatedContentResponse($resources, count($resources));
     }
 
     protected function validateResourceDocument($json, $data)
@@ -50,7 +50,7 @@ class FlowsCreate extends JsonApiController
         }
     }
 
-    private function createFlow(array $json, $source_unit, $target_courses, $user): array
+    private function createFlows(array $json, $source_unit, $target_courses, $user): array
     {
         $source_course = $source_unit->course;
 
@@ -65,17 +65,19 @@ class FlowsCreate extends JsonApiController
 
     private function createFlowForCourse($source_unit, $source_course, $target_course, $user): Flow
     {
-        $target_unit = $source_unit::copy($user, $target_course->id, $target_course->range_type);
+        // $target_unit = $source_unit->copy($user, $target_course->id, $target_course->range_type);
         //TODO: create own copy function to get mapping information
     
         $flow = Flow::create([
             'source_course_id' => $source_course->id,
             'source_unit_id' => $source_unit->id,
             'target_course_id' => $target_course->id,
-            'target_unit_id' => $target_unit->id,
+            'target_unit_id' => '0',
             // 'structural_elements_map' => $source_unit->structural_elements_map,
             // 'container_map' => $source_unit->container_map,
             // 'blocks_map' => $source_unit->blocks_map,
+            // 'folders_map' => $source_unit->folders_map,
+            // 'files_map' => $source_unit->files_map,
             'active' => true,
             'auto_sync' => false,
         ]);
