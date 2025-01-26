@@ -15,9 +15,13 @@ const flowsStore = useFlowsStore();
 const emit = defineEmits(['update:open']);
 
 const courses = ref([]);
+const quicksearchRef = ref(null);
 
 const courseSearch = computed(() => contextStore.courseSearch);
 const currentUnit = computed(() => contextStore.selectedUnit);
+const excludedCourses = computed(() => {
+    return [...courses.value.map(course => course.id), contextStore.cid];
+});
 
 const addCourse = async (value) => {
     if (value instanceof Event || !value) {
@@ -26,6 +30,7 @@ const addCourse = async (value) => {
     await coursesStore.fetchById(value);
     const course = coursesStore.byId(value);
     courses.value.push(course);
+    quicksearchRef.value.clear();
 };
 
 const removeCourse = (id) => {
@@ -47,11 +52,10 @@ const addFlow = () => {
     flowsStore.createFlows(data);
     emit('update:open', false);
 };
-
 </script>
 
 <template>
-        <StudipDialog
+    <StudipDialog
         :height="780"
         :width="500"
         :title="$gettext('Verteilung hinzufügen')"
@@ -66,7 +70,14 @@ const addFlow = () => {
             <form class="default cw-flow-dialog-create">
                 <label>
                     {{ $gettext('Veranstaltungssuche') }}
-                    <StudipQuicksearch :searchtype="courseSearch" name="qs" @select="addCourse" :placeholder="$gettext('Suchen')"></StudipQuicksearch>
+                    <StudipQuicksearch
+                        ref="quicksearchRef"
+                        :searchtype="courseSearch"
+                        :excluded-ids="excludedCourses"
+                        name="qs"
+                        @select="addCourse"
+                        :placeholder="$gettext('Suchen')"
+                    ></StudipQuicksearch>
                 </label>
                 <label>
                     {{ $gettext('Veranstaltungen') }}
@@ -83,8 +94,6 @@ const addFlow = () => {
             </form>
         </template>
     </StudipDialog>
-    
-
 </template>
 
 <style lang="scss">
@@ -93,7 +102,7 @@ const addFlow = () => {
         display: flex;
         flex-direction: column;
 
-        input[type="text"] {
+        input[type='text'] {
             width: 100%;
             outline: none;
         }
@@ -130,5 +139,4 @@ const addFlow = () => {
         }
     }
 }
-
 </style>

@@ -21,6 +21,9 @@ const props = defineProps({
     },
 });
 
+const excludedCourses = ref([]);
+const quicksearchRef = ref(null);
+
 const courseSearch = computed(() => contextStore.courseSearch);
 const currentUnit = computed(() => contextStore.selectedUnit);
 
@@ -35,6 +38,8 @@ const unitFlows = computed(() => {
         }));
 });
 
+
+
 // Fetch courses for the current unit flows
 const fetchCourses = async () => {
     if (!currentUnit.value) {
@@ -42,10 +47,13 @@ const fetchCourses = async () => {
     }
     const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit.data.id === currentUnit.value.id);
 
+    excludedCourses.value = [...relevantFlows.map(flow => flow.target_course.data.id), contextStore.cid];
+
     for (const flow of relevantFlows) {
         await coursesStore.fetchById(flow.target_course.data.id);
     }
 };
+
 
 watch(
     () => props.open,
@@ -56,8 +64,11 @@ watch(
     }
 );
 
+
+
 const addCourse = (value) => {
     console.log(value);
+    quicksearchRef.value.clear();
 };
 
 const updateOpen = (value) => {
@@ -116,7 +127,9 @@ const deleteFlow = (flow) => {
                 <label>
                     {{ $gettext('Veranstaltunghinzufügen') }}
                     <StudipQuicksearch
+                        ref="quicksearchRef"
                         :searchtype="courseSearch"
+                        :excluded-ids="excludedCourses"
                         name="qs"
                         @select="addCourse"
                         :placeholder="$gettext('Suchen')"

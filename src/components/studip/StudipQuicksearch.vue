@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { inArray } from 'jquery';
+
 export default {
     name: 'StudipQuicksearch',
     props: {
@@ -59,6 +61,11 @@ export default {
             type: String,
             required: false,
             default: ''
+        },
+        excludedIds: {
+            type: Array,
+            required: false,
+            default: []
         }
     },
     inheritAttrs: false,
@@ -97,7 +104,7 @@ export default {
                     data
                 ).done(response => {
                     this.selected = null;
-                    this.results = response;
+                    this.results = response.filter((item) => !this.excludedIds.includes(item.item_id));
                     this.errorMessage = null;
                 }).fail(response => {
                     this.errorMessage = response.responseText;
@@ -155,6 +162,12 @@ export default {
                     this.inputValue = this.initialValue;
                 }
             }, clear ? 0 : 200);
+        },
+        clear() {
+            this.returnValue = '';
+            this.inputValue = '';
+            this.initialValue = '';
+            this.results = [];
         }
     },
     created () {
