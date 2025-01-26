@@ -23,7 +23,13 @@ class Flow extends \JsonApi\Schemas\SchemaProvider
 
     public function getAttributes($resource, ContextInterface $context): iterable
     {
-        $attributes =  [];
+        $attributes =  [
+            'active' =>  (bool) $resource['active'],
+            'auto_sync' => (bool) $resource['auto_sync'],
+            'status' => (string) $resource['status'],
+            'mkdate' => date('c', $resource['mkdate']),
+            'chdate' => date('c', $resource['chdate']),
+        ];
 
         return $attributes;
     }

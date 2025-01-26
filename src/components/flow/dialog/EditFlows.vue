@@ -102,6 +102,8 @@ const deleteFlow = (flow) => {
                     <tr>
                         <th>{{ $gettext('Veranstaltung') }}</th>
                         <th>{{ $gettext('Status') }}</th>
+                        <th>{{ $gettext('Aktiviert') }}</th>
+                        <th>{{ $gettext('automatisches Synchronisieren') }}</th>
                         <th>{{ $gettext('letzte Aktualisierung') }}</th>
                         <th>{{ $gettext('erstellt am') }}</th>
                         <th>{{ $gettext('Aktion') }}</th>
@@ -111,6 +113,8 @@ const deleteFlow = (flow) => {
                     <tr v-for="flow in unitFlows" :key="flow.id">
                         <td>{{ flow.target_course.attributes?.title || '---' }}</td>
                         <td>{{ flow.status }}</td>
+                        <td><input type="checkbox" :checked="flow.active" disabled></td>
+                        <td><input type="checkbox" :checked="flow.auto_sync" disabled></td>
                         <td>{{ flow.chdate }}</td>
                         <td>{{ flow.mkdate }}</td>
                         <td class="actions">
