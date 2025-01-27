@@ -65,14 +65,14 @@ class FlowsCreate extends JsonApiController
 
     private function createFlowForCourse($source_unit, $source_course, $target_course, $user): Flow
     {
-        // $target_unit = $source_unit->copy($user, $target_course->id, $target_course->range_type);
+        $target_unit = $source_unit->copy($user, $target_course->id, 'course', []);
         //TODO: create own copy function to get mapping information
     
         $flow = Flow::create([
             'source_course_id' => $source_course->id,
             'source_unit_id' => $source_unit->id,
             'target_course_id' => $target_course->id,
-            'target_unit_id' => '0',
+            'target_unit_id' => $target_unit->id,
             // 'structural_elements_map' => $source_unit->structural_elements_map,
             // 'container_map' => $source_unit->container_map,
             // 'blocks_map' => $source_unit->blocks_map,

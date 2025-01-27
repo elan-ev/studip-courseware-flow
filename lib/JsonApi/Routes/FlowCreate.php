@@ -54,7 +54,7 @@ class FlowCreate extends JsonApiController
     {
         $source_course = $source_unit->course;
 
-        //$target_unit = $source_unit::copy($user, $target_course->id, $target_course->range_type);
+        // $target_unit = $source_unit->copy($user, $target_course->id, 'course', false);
         //TODO: create own copy function to get mapping information
 
         $flow = Flow::create([
@@ -62,7 +62,7 @@ class FlowCreate extends JsonApiController
             'source_unit_id' => $source_unit->id,
             'target_course_id' => $target_course->id,
             // 'target_unit_id' => $target_unit->id,
-            'target_unit_id' => '0',
+            'target_unit_id' => 0,
             // 'structural_elements_map' => $source_unit->structural_elements_map,
             // 'container_map' => $source_unit->container_map,
             // 'blocks_map' => $source_unit->blocks_map,

@@ -35,13 +35,13 @@ class UnitFlowsDelete extends JsonApiController
         $clonedFlows = array_map(fn($obj) => clone $obj, $flows);
 
         foreach ($flows as $flow) {
-            $flow->delete();
             if ($with_units) {
                 $target_unit = \Courseware\Unit::find($flow->target_unit_id);
                 if ($target_unit) {
                     $target_unit->delete();
                 }
             }
+            $flow->delete();
         }
 
         return $this->getPaginatedContentResponse($clonedFlows, count($clonedFlows));
