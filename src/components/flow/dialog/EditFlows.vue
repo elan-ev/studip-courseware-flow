@@ -1,14 +1,16 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 
-import { useContextStore } from '../../../stores/context';
-import { useCoursesStore } from '../../../stores/courses';
-import { useFlowsStore } from '../../../stores/flows';
-
 import StudipActionMenu from './../../studip/StudipActionMenu.vue';
 import StudipDialog from './../../studip/StudipDialog.vue';
 import StudipQuicksearch from './../../studip/StudipQuicksearch.vue';
 
+import { useDateFormatter } from "@/composables/useDateFormatter";
+const { formatDate } = useDateFormatter();
+
+import { useContextStore } from '../../../stores/context';
+import { useCoursesStore } from '../../../stores/courses';
+import { useFlowsStore } from '../../../stores/flows';
 const contextStore = useContextStore();
 const coursesStore = useCoursesStore();
 const flowsStore = useFlowsStore();
@@ -115,8 +117,8 @@ const deleteFlow = (flow) => {
                         <td>{{ flow.status }}</td>
                         <td><input type="checkbox" :checked="flow.active" disabled></td>
                         <td><input type="checkbox" :checked="flow.auto_sync" disabled></td>
-                        <td>{{ flow.chdate }}</td>
-                        <td>{{ flow.mkdate }}</td>
+                        <td>{{ formatDate(flow.chdate) }}</td>
+                        <td>{{ formatDate(flow.mkdate) }}</td>
                         <td class="actions">
                             <StudipActionMenu
                                 :context="$gettext('Verteiltes Lernmaterial')"
