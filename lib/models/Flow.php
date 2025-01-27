@@ -30,11 +30,11 @@ class Flow extends SimpleORMap
     {
         $config['db_table'] = 'cw_flow';
 
-        // $config['serialized_fields']['structural_elements_map'] = JSONArrayObject::class;
-        // $config['serialized_fields']['container_map'] = JSONArrayObject::class;
-        // $config['serialized_fields']['blocks_map'] = JSONArrayObject::class;
-        // $config['serialized_fields']['folders_map'] = JSONArrayObject::class;
-        // $config['serialized_fields']['files_map'] = JSONArrayObject::class;
+        $config['serialized_fields']['structural_elements_map'] = \JSONArrayObject::class;
+        $config['serialized_fields']['container_map'] = \JSONArrayObject::class;
+        $config['serialized_fields']['blocks_map'] = \JSONArrayObject::class;
+        $config['serialized_fields']['folders_map'] = \JSONArrayObject::class;
+        $config['serialized_fields']['files_map'] = \JSONArrayObject::class;
 
         $config['belongs_to']['source_course'] = [
             'class_name'  => \Course::class,
