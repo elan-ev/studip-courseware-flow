@@ -1,16 +1,16 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 
-import StudipActionMenu from './../../studip/StudipActionMenu.vue';
-import StudipDialog from './../../studip/StudipDialog.vue';
-import StudipQuicksearch from './../../studip/StudipQuicksearch.vue';
+import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
+import StudipDialog from '@/components/studip/StudipDialog.vue';
+import StudipQuicksearch from '@/components/studip/StudipQuicksearch.vue';
 
 import { useDateFormatter } from "@/composables/useDateFormatter";
 const { formatDate } = useDateFormatter();
 
-import { useContextStore } from '../../../stores/context';
-import { useCoursesStore } from '../../../stores/courses';
-import { useFlowsStore } from '../../../stores/flows';
+import { useContextStore } from '@/stores/context';
+import { useCoursesStore } from '@/stores/courses';
+import { useFlowsStore } from '@/stores/flows';
 const contextStore = useContextStore();
 const coursesStore = useCoursesStore();
 const flowsStore = useFlowsStore();

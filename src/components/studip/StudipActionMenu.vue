@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useGettext } from 'vue3-gettext';
-import StudipIcon from './StudipIcon.vue';
+import StudipIcon from '@/components/studip/StudipIcon.vue';
 
 const ACTIONMENU_THRESHOLD = 3;
 

@@ -1,13 +1,12 @@
 <script setup>
 import { computed, onBeforeMount, ref } from 'vue';
-import FlowsTable from './flow/FlowsTable.vue';
-import FlowsCards from './flow/FlowsCards.vue';
-import DialogCreateFlow from './flow/dialog/CreateFlow.vue';
+import FlowsTable from '@/components/flow/FlowsTable.vue';
+import FlowsCards from '@/components/flow/FlowsCards.vue';
+import DialogCreateFlow from '@/components/flow/dialog/CreateFlow.vue';
 
-import { useContextStore } from './../stores/context.js';
-import { useFlowsStore } from './../stores/flows.js';
-import { useUnitsStore } from './../stores/units.js';
-
+import { useContextStore } from '@/stores/context.js';
+import { useFlowsStore } from '@/stores/flows.js';
+import { useUnitsStore } from '@/stores/units.js';
 const contextStore = useContextStore();
 const flowsStore = useFlowsStore();
 const unitStore = useUnitsStore();

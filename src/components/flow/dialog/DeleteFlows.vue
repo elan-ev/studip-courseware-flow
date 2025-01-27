@@ -1,9 +1,9 @@
 <script setup>
 import { computed } from 'vue';
 
-import { useContextStore } from '../../../stores/context';
-import { useFlowsStore } from '../../../stores/flows';
-import StudipDialog from '../../studip/StudipDialog.vue';
+import { useContextStore } from '@/stores/context';
+import { useFlowsStore } from '@/stores/flows';
+import StudipDialog from '@/components/studip/StudipDialog.vue';
 
 const contextStore = useContextStore();
 const flowsStore = useFlowsStore();

@@ -1,15 +1,13 @@
 <script setup>
 import { computed, ref } from 'vue';
-import StudipActionMenu from './../studip/StudipActionMenu.vue';
-import StudipIcon from './../studip/StudipIcon.vue';
-import DialogDeleteFlows from './dialog/DeleteFlows.vue';
-import DialogEditFlows from './dialog/EditFlows.vue';
+import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
+import StudipIcon from '@/components/studip/StudipIcon.vue';
+import DialogDeleteFlows from '@/components/flow/dialog/DeleteFlows.vue';
+import DialogEditFlows from '@/components/flow/dialog/EditFlows.vue';
 
-import { useContextStore } from './../../stores/context.js';
-import { useFlowsStore } from './../../stores/flows.js';
-import { useUnitsStore } from './../../stores/units.js';
-
-
+import { useContextStore } from '@/stores/context.js';
+import { useFlowsStore } from '@/stores/flows.js';
+import { useUnitsStore } from '@/stores/units.js';
 const contextStore = useContextStore();
 const flowsStore = useFlowsStore();
 const unitStore = useUnitsStore();

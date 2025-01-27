@@ -1,12 +1,12 @@
 <script setup>
 import { computed, ref } from 'vue';
 
-import { useContextStore } from './../../../stores/context';
-import { useCoursesStore } from './../../../stores/courses';
-import { useFlowsStore } from './../../../stores/flows';
-import StudipQuicksearch from './../../studip/StudipQuicksearch.vue';
-import StudipDialog from './../../studip/StudipDialog.vue';
-import StudipIcon from './../../studip/StudipIcon.vue';
+import { useContextStore } from '@/stores/context';
+import { useCoursesStore } from '@/stores/courses';
+import { useFlowsStore } from '@/stores/flows';
+import StudipQuicksearch from '@/components/studip/StudipQuicksearch.vue';
+import StudipDialog from '@/components/studip/StudipDialog.vue';
+import StudipIcon from '@/components/studip/StudipIcon.vue';
 
 const contextStore = useContextStore();
 const coursesStore = useCoursesStore();
