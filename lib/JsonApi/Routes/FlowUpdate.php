@@ -36,12 +36,8 @@ class FlowUpdate extends JsonApiController
             return 'Missing `data` member at document´s top level.';
         }
 
-        if (!self::arrayHas($json, 'data.attributes.flow-id')) {
-            return 'Document must have an `flow-id`.';
-        }
-
-        if (!self::arrayHas($json, 'data.attributes.target-course-id')) {
-            return 'Document must have an `target-course-id`.';
+        if (!self::arrayHas($json, 'data.id')) {
+            return 'Document must have an `id`.';
         }
     }
 
@@ -50,6 +46,10 @@ class FlowUpdate extends JsonApiController
 
         if (isset($json['data']['attributes']['active'])) {
             $resource->active = $json['data']['attributes']['active'];
+        }
+
+        if (isset($json['data']['attributes']['auto_sync'])) {
+            $resource->auto_sync = $json['data']['attributes']['auto_sync'];
         }
 
         $resource->store();

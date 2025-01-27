@@ -32,9 +32,7 @@ export const useFlowsStore = defineStore(
             inProgress.value = true;
             try {
                 const { data } = await api.fetch(`courseware-flows/${id}`, {
-                    params: {
-                        include: 'structural-element',
-                    },
+                    params: {},
                 });
                 storeRecord(data);
             } catch (err) {
@@ -97,6 +95,20 @@ export const useFlowsStore = defineStore(
             });
         }
 
+        async function updateFlow(flow) {
+            return api.patch('courseware-flows', { id: flow.id, ...flow }).then(() => {
+                fetchById(flow.id);
+            });
+        }
+
+        async function deleteFlow(flow) {
+            inProgress.value = true;
+            return api.delete('courseware-flows', flow.id).then(() => {
+                records.value.delete(flow.id);
+                inProgress.value = false;
+            });
+        }
+
         async function deleteUnitFlows(unitId) {
             inProgress.value = true;
             return api
@@ -125,6 +137,8 @@ export const useFlowsStore = defineStore(
             fetchUnitFlows,
             fetchCourseFlows,
             createFlows,
+            updateFlow,
+            deleteFlow,
             deleteUnitFlows,
         };
     }

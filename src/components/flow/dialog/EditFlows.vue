@@ -5,7 +5,7 @@ import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipDialog from '@/components/studip/StudipDialog.vue';
 import StudipQuicksearch from '@/components/studip/StudipQuicksearch.vue';
 
-import { useDateFormatter } from "@/composables/useDateFormatter";
+import { useDateFormatter } from '@/composables/useDateFormatter';
 const { formatDate } = useDateFormatter();
 
 import { useContextStore } from '@/stores/context';
@@ -40,8 +40,6 @@ const unitFlows = computed(() => {
         }));
 });
 
-
-
 // Fetch courses for the current unit flows
 const fetchCourses = async () => {
     if (!currentUnit.value) {
@@ -49,13 +47,12 @@ const fetchCourses = async () => {
     }
     const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit.data.id === currentUnit.value.id);
 
-    excludedCourses.value = [...relevantFlows.map(flow => flow.target_course.data.id), contextStore.cid];
+    excludedCourses.value = [...relevantFlows.map((flow) => flow.target_course.data.id), contextStore.cid];
 
     for (const flow of relevantFlows) {
         await coursesStore.fetchById(flow.target_course.data.id);
     }
 };
-
 
 watch(
     () => props.open,
@@ -66,8 +63,6 @@ watch(
     }
 );
 
-
-
 const addCourse = (value) => {
     console.log(value);
     quicksearchRef.value.clear();
@@ -77,15 +72,19 @@ const updateOpen = (value) => {
     emit('update:open', value);
 };
 
-const updateFlows = () => {
-    console.log('update flow');
-    console.log(currentUnit.value);
-    emit('update:open', false);
+const toggleActiveFlow = (flow, newStatus) => {
+    flow.active = newStatus;
+    flowsStore.updateFlow(flow);
+};
+const toggleAutoSyncFlow = (flow, newStatus) => {
+    flow.auto_sync = newStatus;
+    flowsStore.updateFlow(flow);
 };
 
+
 const deleteFlow = (flow) => {
-    console.log('delete flow');
     console.log(flow);
+    flowsStore.deleteFlow(flow);
 };
 </script>
 
@@ -115,14 +114,18 @@ const deleteFlow = (flow) => {
                     <tr v-for="flow in unitFlows" :key="flow.id">
                         <td>{{ flow.target_course.attributes?.title || '---' }}</td>
                         <td>{{ flow.status }}</td>
-                        <td><input type="checkbox" :checked="flow.active" disabled></td>
-                        <td><input type="checkbox" :checked="flow.auto_sync" disabled></td>
+                        <td><input type="checkbox" :checked="flow.active" @change="toggleActiveFlow(flow, $event.target.checked)" /></td>
+                        <td><input type="checkbox" :checked="flow.auto_sync" @change="toggleAutoSyncFlow(flow, $event.target.checked)" /></td>
                         <td>{{ formatDate(flow.chdate) }}</td>
                         <td>{{ formatDate(flow.mkdate) }}</td>
                         <td class="actions">
                             <StudipActionMenu
                                 :context="$gettext('Verteiltes Lernmaterial')"
-                                :items="[{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }]"
+                                :items="
+                                    unitFlows.length > 1
+                                        ? [{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }]
+                                        : []
+                                "
                                 @delete="deleteFlow(flow)"
                             />
                         </td>
