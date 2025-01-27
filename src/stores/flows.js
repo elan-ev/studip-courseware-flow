@@ -2,11 +2,13 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { api } from '../api.js';
 import { useContextStore } from './context';
+import { useCoursesStore }   from './courses';
 
 export const useFlowsStore = defineStore(
     'courseware-flows',
     () => {
         const contextStore = useContextStore();
+        const coursesStore = useCoursesStore();
 
         const records = ref(new Map());
         const inProgress = ref(false);
@@ -76,7 +78,15 @@ export const useFlowsStore = defineStore(
                 console.error('fetching course flows', err);
                 errors.value = err;
             });
-        }   
+        }
+
+        async function createFlow(flow) {
+            inProgress.value = true;
+            const { data } = await api.post('courseware-flows', flow);
+            await coursesStore.fetchById(data.target_course.data.id);
+            storeRecord(data);
+            inProgress.value = false;
+        }
 
         async function createFlows(data) {
             inProgress.value = true;
@@ -136,6 +146,7 @@ export const useFlowsStore = defineStore(
             fetchById,
             fetchUnitFlows,
             fetchCourseFlows,
+            createFlow,
             createFlows,
             updateFlow,
             deleteFlow,

@@ -47,12 +47,18 @@ const fetchCourses = async () => {
     }
     const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit.data.id === currentUnit.value.id);
 
-    excludedCourses.value = [...relevantFlows.map((flow) => flow.target_course.data.id), contextStore.cid];
+    updateExcludedCourses();
 
     for (const flow of relevantFlows) {
         await coursesStore.fetchById(flow.target_course.data.id);
     }
 };
+
+const updateExcludedCourses = () => {
+    const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit.data.id === currentUnit.value.id);
+
+    excludedCourses.value = [...relevantFlows.map((flow) => flow.target_course.data.id), contextStore.cid];
+}
 
 watch(
     () => props.open,
@@ -63,9 +69,17 @@ watch(
     }
 );
 
-const addCourse = (value) => {
-    console.log(value);
+const addCourse = async (value) => {
+    if (value instanceof Event || !value) {
+        return;
+    }
+    const data = {
+        source_unit_id: currentUnit.value.id,
+        target_course_id: value,
+    };
+    await flowsStore.createFlow(data);
     quicksearchRef.value.clear();
+    updateExcludedCourses();
 };
 
 const updateOpen = (value) => {
@@ -82,9 +96,9 @@ const toggleAutoSyncFlow = (flow, newStatus) => {
 };
 
 
-const deleteFlow = (flow) => {
-    console.log(flow);
-    flowsStore.deleteFlow(flow);
+const deleteFlow = async (flow) => {
+    await flowsStore.deleteFlow(flow);
+    updateExcludedCourses();
 };
 </script>
 
@@ -134,7 +148,7 @@ const deleteFlow = (flow) => {
             </table>
             <form class="default cw-flow-dialog-edit">
                 <label>
-                    {{ $gettext('Veranstaltunghinzufügen') }}
+                    {{ $gettext('Veranstaltung hinzufügen') }}
                     <StudipQuicksearch
                         ref="quicksearchRef"
                         :searchtype="courseSearch"

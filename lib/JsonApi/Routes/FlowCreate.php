@@ -32,7 +32,7 @@ class FlowCreate extends JsonApiController
             throw new AuthorizationFailedException();
         }
 
-        $resource = $this->createFlow($json, $source_unit, $target_course, $user);
+        $resource = $this->createFlow( $source_unit, $target_course, $user);
 
         return $this->getCreatedResponse($resource);
     }
@@ -42,46 +42,47 @@ class FlowCreate extends JsonApiController
         if (!self::arrayHas($json, 'data')) {
             return 'Missing `data` member at document´s top level.';
         }
-        if (!self::arrayHas($json, 'data.attributes.tool-id')) {
-            return 'New document must not have an `tool-id`.';
+        if (!self::arrayHas($json, 'data.attributes.target_course_id')) {
+            return 'New document must not have an `target_course_id`.';
         }
-        if (!self::arrayHas($json, 'data.attributes.course-id')) {
-            return 'New document must not have an `course-id`.';
+        if (!self::arrayHas($json, 'data.attributes.source_unit_id')) {
+            return 'New document must not have an `source_unit_id`.';
         }
     }
 
-    private function createFlow(array $json, $source_unit, $target_course, $user): Flow
+    private function createFlow($source_unit, $target_course, $user): Flow
     {
         $source_course = $source_unit->course;
 
-        $target_unit = $source_unit::copy($user, $target_course->id, $target_course->range_type);
+        //$target_unit = $source_unit::copy($user, $target_course->id, $target_course->range_type);
         //TODO: create own copy function to get mapping information
 
         $flow = Flow::create([
             'source_course_id' => $source_course->id,
             'source_unit_id' => $source_unit->id,
             'target_course_id' => $target_course->id,
-            'target_unit_id' => $target_unit->id,
+            // 'target_unit_id' => $target_unit->id,
+            'target_unit_id' => '0',
             // 'structural_elements_map' => $source_unit->structural_elements_map,
             // 'container_map' => $source_unit->container_map,
             // 'blocks_map' => $source_unit->blocks_map,
             'active' => true,
-            'auto_sync' => false,
+            'auto_sync' => true,
         ]);
 
         return $flow;
     }
 
-    private function getUnit(Request $json): ?\Courseware\Unit
+    private function getUnit($json): ?\Courseware\Unit
     {
-        $unit_id = self::arrayGet($json, 'data.attributes.source-unit-id');
+        $unit_id = self::arrayGet($json, 'data.attributes.source_unit_id');
 
         return \Courseware\Unit::find($unit_id);
     }
 
     private function getTargetCourse($json): ?\Course
     {
-        $course_id = self::arrayGet($json, 'data.attributes.target-course-id');
+        $course_id = self::arrayGet($json, 'data.attributes.target_course_id');
 
         return \Course::find($course_id);
     }
