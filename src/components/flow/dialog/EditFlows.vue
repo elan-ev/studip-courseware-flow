@@ -4,6 +4,7 @@ import { computed, ref, watch } from 'vue';
 import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipDialog from '@/components/studip/StudipDialog.vue';
 import StudipQuicksearch from '@/components/studip/StudipQuicksearch.vue';
+import DeleteFlow from '@/components/flow/dialog/DeleteFlow.vue';
 
 import { useDateFormatter } from '@/composables/useDateFormatter';
 const { formatDate } = useDateFormatter();
@@ -25,10 +26,11 @@ const props = defineProps({
 
 const excludedCourses = ref([]);
 const quicksearchRef = ref(null);
+const openDeleteDialog = ref(false);
 
 const courseSearch = computed(() => contextStore.courseSearch);
 const currentUnit = computed(() => contextStore.selectedUnit);
-
+const currentFlow = computed(() => contextStore.selectedFlow);
 const unitFlows = computed(() => {
     return flowsStore.all
         .filter((flow) => flow.source_unit.data.id === currentUnit.value?.id)
@@ -60,15 +62,6 @@ const updateExcludedCourses = () => {
     excludedCourses.value = [...relevantFlows.map((flow) => flow.target_course.data.id), contextStore.cid];
 }
 
-watch(
-    () => props.open,
-    async (newValue) => {
-        if (newValue) {
-            await fetchCourses();
-        }
-    }
-);
-
 const addCourse = async (value) => {
     if (value instanceof Event || !value) {
         return;
@@ -90,16 +83,38 @@ const toggleActiveFlow = (flow, newStatus) => {
     flow.active = newStatus;
     flowsStore.updateFlow(flow);
 };
+
 const toggleAutoSyncFlow = (flow, newStatus) => {
     flow.auto_sync = newStatus;
     flowsStore.updateFlow(flow);
 };
 
+const updateOpenDeleteDialog = (state) => {
+    openDeleteDialog.value = state;
 
-const deleteFlow = async (flow) => {
-    await flowsStore.deleteFlow(flow);
+    if (!state) {
+        contextStore.setSelectedFlow(null);
+    }
+};
+
+const showDeleteFlow = (flow) => {
+    contextStore.setSelectedFlow(flow);
+    updateOpenDeleteDialog(true);
+};
+
+const deleteFlow = async (withUnit) => {
+    await flowsStore.deleteFlow( currentFlow.value, withUnit);
     updateExcludedCourses();
 };
+
+watch(
+    () => props.open,
+    async (newValue) => {
+        if (newValue) {
+            await fetchCourses();
+        }
+    }
+);
 </script>
 
 <template>
@@ -140,7 +155,7 @@ const deleteFlow = async (flow) => {
                                         ? [{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }]
                                         : []
                                 "
-                                @delete="deleteFlow(flow)"
+                                @delete="showDeleteFlow(flow)"
                             />
                         </td>
                     </tr>
@@ -159,6 +174,8 @@ const deleteFlow = async (flow) => {
                     ></StudipQuicksearch>
                 </label>
             </form>
+            <DeleteFlow :open="openDeleteDialog" @update:open="updateOpenDeleteDialog" @delete="deleteFlow"/>
+            
         </template>
     </StudipDialog>
 </template>

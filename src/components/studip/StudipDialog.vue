@@ -173,10 +173,10 @@ const confirmDialog = () => emit('confirm');
                     </DialogTitle>
 
                     <section class="studip-dialog-content" :style="{ height: contentHeight }">
-                        <slot name="dialogContent"></slot>
                         <div v-if="message">{{ message }}</div>
                         <div v-if="question">{{ question }}</div>
                         <div v-if="alert">{{ alert }}</div>
+                        <slot name="dialogContent"></slot>
                     </section>
                     <footer class="studip-dialog-footer" ref="footerRef">
                         <div class="studip-dialog-footer-buttonset-left">

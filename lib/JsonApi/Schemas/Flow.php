@@ -27,6 +27,10 @@ class Flow extends \JsonApi\Schemas\SchemaProvider
             'active' =>  (bool) $resource['active'],
             'auto_sync' => (bool) $resource['auto_sync'],
             'status' => (string) $resource['status'],
+            'source_course_id' => (string) $resource['source_course_id'],
+            'source_unit_id' => (string) $resource['source_unit_id'],
+            'target_course_id' => (string) $resource['target_course_id'],
+            'target_unit_id' => (string) $resource['target_unit_id'],
             'mkdate' => date('c', $resource['mkdate']),
             'chdate' => date('c', $resource['chdate']),
         ];

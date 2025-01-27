@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { useContextStore } from '@/stores/context';
 import { useFlowsStore } from '@/stores/flows';
@@ -10,6 +10,8 @@ const flowsStore = useFlowsStore();
 
 const emit = defineEmits(['update:open']);
 
+const withUnits = ref(false);
+
 const currentUnit = computed(() => contextStore.selectedUnit);
 
 const updateOpen = (value) => {
@@ -17,14 +19,15 @@ const updateOpen = (value) => {
 };
 
 const deleteUnitFlows = () => {
-    flowsStore.deleteUnitFlows(currentUnit.value.id);
+    flowsStore.deleteUnitFlows(currentUnit.value.id, withUnits.value);
     emit('update:open', false);
 };
 </script>
 
 <template>
     <StudipDialog
-        :height="200"
+        class="cw-flow-dialog-delete"
+        :height="260"
         :title="$gettext('Verteilungen löschen')"
         confirm-class="trash"
         :close-text="$gettext('Abbrechen')"
@@ -34,6 +37,11 @@ const deleteUnitFlows = () => {
         @update:open="updateOpen"
         @confirm="deleteUnitFlows"
         >
-        
+        <template #dialogContent>
+            <p class="cw-flow-dialog-option">
+                <input type="checkbox" v-model="withUnits" />
+                {{ $gettext('Löschen inklusive Lernmaterial in den Zielveranstaltungen') }}
+            </p>
+        </template>
         </StudipDialog>
 </template>
