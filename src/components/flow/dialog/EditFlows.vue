@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipDialog from '@/components/studip/StudipDialog.vue';
@@ -117,7 +117,9 @@ watch(
 );
 
 onMounted(() => {
-    useFlowsStore.fetchUnitFlows(useContextStore.currentUnit.id);
+    if (useContextStore.currentUnit) {
+        useFlowsStore.fetchUnitFlows(useContextStore.currentUnit.id);
+    }
 });
 </script>
 
