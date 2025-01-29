@@ -21,7 +21,7 @@ const deleteFlow = () => {
 <template>
     <StudipDialog
         class="cw-flow-dialog-delete"
-        :height="260"
+        :height="280"
         :title="$gettext('Verteilungen löschen')"
         confirm-class="trash"
         :close-text="$gettext('Abbrechen')"
@@ -33,8 +33,10 @@ const deleteFlow = () => {
     >
         <template #dialogContent>
             <p class="cw-flow-dialog-option">
-                <input type="checkbox" v-model="withUnit" />
-                {{ $gettext('Löschen inklusive Lernmaterial in der Zielveranstaltung') }}
+                <label>
+                    <input type="checkbox" v-model="withUnit" />
+                    {{ $gettext('Löschen inklusive Lernmaterial in der Zielveranstaltung') }}
+                </label>
             </p>
         </template>
     </StudipDialog>
