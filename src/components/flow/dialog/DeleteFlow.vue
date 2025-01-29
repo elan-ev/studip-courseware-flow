@@ -14,6 +14,7 @@ const updateOpen = (value) => {
 const deleteFlow = () => {
     emit('delete', withUnit.value);
     emit('update:open', false);
+    withUnit.value = false;
 };
 </script>
 

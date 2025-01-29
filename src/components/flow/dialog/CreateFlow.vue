@@ -51,6 +51,7 @@ const addFlow = () => {
     };
     flowsStore.createFlows(data);
     emit('update:open', false);
+    courses.value = [];
 };
 </script>
 

@@ -21,6 +21,7 @@ const updateOpen = (value) => {
 const deleteUnitFlows = () => {
     flowsStore.deleteUnitFlows(currentUnit.value.id, withUnits.value);
     emit('update:open', false);
+    withUnits.value = false;
 };
 </script>
 
