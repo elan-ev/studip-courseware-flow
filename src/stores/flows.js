@@ -88,7 +88,7 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
 
     async function createFlows(data) {
         inProgress.value = true;
-        return api
+        api
             .create(`/courseware-flows/create-flows`, {
                 'source-unit-id': data['source-unit-id'],
                 'target-course-ids': data['target-course-ids'],
@@ -98,9 +98,13 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
                 inProgress.value = false;
             })
             .catch((err) => {
-                console.error('creating flows', err);
-                errors.value = err;
+                // console.error('creating flows', err);
+                // errors.value = err;
             });
+        
+        setTimeout(() => {
+            fetchCourseFlows()
+        }, 1000);
     }
 
     async function updateFlow(flow) {

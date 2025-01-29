@@ -5,7 +5,7 @@ namespace CoursewareFlow\JsonApi\Routes;
 use JsonApi\Errors\AuthorizationFailedException;
 use JsonApi\Errors\RecordNotFoundException;
 use JsonApi\JsonApiController;
-use CoursewareFlow\models\Flow;
+use CoursewareFlow\Models\Flow;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

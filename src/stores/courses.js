@@ -28,10 +28,7 @@ export const useCoursesStore = defineStore(
         async function fetchById(id) {
             isLoading.value = true;
             try {
-                const { data } = await api.fetch(`courses/${id}`, {
-                    params: {
-                    },
-                });
+                const { data } = await api.fetch(`courses/${id}`);
                 storeRecord(data);
             } catch (err) {
                 console.error('fetching course', err);

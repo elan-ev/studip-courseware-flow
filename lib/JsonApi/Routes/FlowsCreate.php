@@ -7,7 +7,8 @@ use JsonApi\Errors\RecordNotFoundException;
 use JsonApi\Errors\AuthorizationFailedException;
 use JsonApi\JsonApiController;
 
-use CoursewareFlow\models\Flow;
+use CoursewareFlow\Models\Flow;
+use CoursewareFlow\Helpers\CopyHelper;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -57,33 +58,66 @@ class FlowsCreate extends JsonApiController
         $flows = [];
 
         foreach ($target_courses as $target_course) {
-            $flows[] = $this->createFlowForCourse($source_unit, $source_course, $target_course, $user);
+            $flow = Flow::create([
+                'source_course_id' => $source_course->id,
+                'source_unit_id' => $source_unit->id,
+                'target_course_id' => $target_course->id,
+                'target_unit_id' => null,
+                'status' => 'running',
+                'active' => true,
+                'auto_sync' => false,
+            ]);
+            $flows[] = $flow;
+        }
+
+        foreach ($flows as $flow) {
+            $this->createFlowTargetUnit($flow, $source_unit, $user);
         }
 
         return $flows;
     }
 
-    private function createFlowForCourse($source_unit, $source_course, $target_course, $user): Flow
+    private function createFlowTargetUnit(Flow $flow, $source_unit, $user): void
     {
-        $target_unit = $source_unit->copy($user, $target_course->id, 'course', []);
-        //TODO: create own copy function to get mapping information
-    
-        $flow = Flow::create([
-            'source_course_id' => $source_course->id,
-            'source_unit_id' => $source_unit->id,
-            'target_course_id' => $target_course->id,
-            'target_unit_id' => $target_unit->id,
-            // 'structural_elements_map' => $source_unit->structural_elements_map,
-            // 'container_map' => $source_unit->container_map,
-            // 'blocks_map' => $source_unit->blocks_map,
-            // 'folders_map' => $source_unit->folders_map,
-            // 'files_map' => $source_unit->files_map,
-            'active' => true,
-            'auto_sync' => false,
-        ]);
+        $target_unit = CopyHelper::copyUnit($user, $source_unit, $flow->target_course_id);
 
-        return $flow;
+        $flow->target_unit_id = $target_unit->id;
+        $flow->status = 'idle';
+
+                // 'structural_elements_map' => $source_unit->structural_elements_map,
+                // 'container_map' => $source_unit->container_map, 
+                // 'blocks_map' => $source_unit->blocks_map,
+                // 'folders_map' => $source_unit->folders_map,
+                // 'files_map' => $source_unit->files_map,
+        $flow->store();
     }
+
+    // private function createFlowForCourse($source_unit, $source_course, $target_course, $user): ?Flow
+    // {
+    //     $flow = Flow::create([
+    //         'source_course_id' => $source_course->id,
+    //         'source_unit_id' => $source_unit->id,
+    //         'target_course_id' => $target_course->id,
+    //         'target_unit_id' => null,
+    //         // 'structural_elements_map' => $source_unit->structural_elements_map,
+    //         // 'container_map' => $source_unit->container_map,
+    //         // 'blocks_map' => $source_unit->blocks_map,
+    //         // 'folders_map' => $source_unit->folders_map,
+    //         // 'files_map' => $source_unit->files_map,
+    //         'status' => 'running',
+    //         'active' => true,
+    //         'auto_sync' => false,
+    //     ]);
+
+    //     $target_unit = CopyHelper::copyUnit($user, $source_unit, $target_course);
+
+    //     $flow->target_unit_id = $target_unit->id;
+    //     $flow->status = 'idle';
+    //     $flow->store();
+
+    //     return $flow;
+    // }
+
 
     private function getUnit($json): ?\Courseware\Unit
     {

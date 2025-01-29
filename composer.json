@@ -11,10 +11,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "CoursewareFlow\\classes\\": "lib/classes/",
-            "CoursewareFlow\\models\\": "lib/models/",
-            "CoursewareFlow\\JsonApi\\": "lib/JsonApi/"
-        }
+            "CoursewareFlow\\": "lib/"
+        }   
     },
     "require": {
         "php": "^7.0 || ^8.0",

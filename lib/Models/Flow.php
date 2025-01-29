@@ -1,6 +1,6 @@
 <?php
 
-namespace CoursewareFlow\models;
+namespace CoursewareFlow\Models;
 
 use SimpleORMap;
 

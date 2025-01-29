@@ -1,5 +1,4 @@
 <?php
-StudipAutoloader::addAutoloadPath(__DIR__ . '/lib/classes', 'CoursewareFlow\\classes');
-StudipAutoloader::addAutoloadPath(__DIR__ . '/lib/models', 'CoursewareFlow\\models');
+StudipAutoloader::addAutoloadPath(__DIR__ . '/lib/Helpers', 'CoursewareFlow\\Helpers');
 StudipAutoloader::addAutoloadPath(__DIR__ . '/lib/JsonApi', 'CoursewareFlow\\JsonApi');
-
+StudipAutoloader::addAutoloadPath(__DIR__ . '/lib/Models', 'CoursewareFlow\\Models');
