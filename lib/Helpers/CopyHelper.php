@@ -65,7 +65,7 @@ class CopyHelper
         // addToMap($structural_elements_image_map, $source_unit_structural_element->image_id, $target_unit_structural_element->image_id);
 
         //simulate copy children
-        sleep(30);
+        sleep(10);
         
 
         return [

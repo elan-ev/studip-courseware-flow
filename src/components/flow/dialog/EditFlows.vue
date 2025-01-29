@@ -115,6 +115,10 @@ watch(
         }
     }
 );
+
+onMounted(() => {
+    useFlowsStore.fetchUnitFlows(useContextStore.currentUnit.id);
+});
 </script>
 
 <template>
