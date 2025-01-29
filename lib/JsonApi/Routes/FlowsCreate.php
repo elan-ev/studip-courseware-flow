@@ -79,45 +79,15 @@ class FlowsCreate extends JsonApiController
 
     private function createFlowTargetUnit(Flow $flow, $source_unit, $user): void
     {
-        $target_unit = CopyHelper::copyUnit($user, $source_unit, $flow->target_course_id);
+        $target = CopyHelper::copyUnit($user, $source_unit, $flow->target_course_id);
 
-        $flow->target_unit_id = $target_unit->id;
+        $flow->target_unit_id = $target['target_unit']->id;
         $flow->status = 'idle';
+        $flow->structural_elements_map = json_encode($target['structural_elements_map']);
+        $flow->structural_elements_image_map = json_encode($target['structural_elements_image_map']);
 
-                // 'structural_elements_map' => $source_unit->structural_elements_map,
-                // 'container_map' => $source_unit->container_map, 
-                // 'blocks_map' => $source_unit->blocks_map,
-                // 'folders_map' => $source_unit->folders_map,
-                // 'files_map' => $source_unit->files_map,
         $flow->store();
     }
-
-    // private function createFlowForCourse($source_unit, $source_course, $target_course, $user): ?Flow
-    // {
-    //     $flow = Flow::create([
-    //         'source_course_id' => $source_course->id,
-    //         'source_unit_id' => $source_unit->id,
-    //         'target_course_id' => $target_course->id,
-    //         'target_unit_id' => null,
-    //         // 'structural_elements_map' => $source_unit->structural_elements_map,
-    //         // 'container_map' => $source_unit->container_map,
-    //         // 'blocks_map' => $source_unit->blocks_map,
-    //         // 'folders_map' => $source_unit->folders_map,
-    //         // 'files_map' => $source_unit->files_map,
-    //         'status' => 'running',
-    //         'active' => true,
-    //         'auto_sync' => false,
-    //     ]);
-
-    //     $target_unit = CopyHelper::copyUnit($user, $source_unit, $target_course);
-
-    //     $flow->target_unit_id = $target_unit->id;
-    //     $flow->status = 'idle';
-    //     $flow->store();
-
-    //     return $flow;
-    // }
-
 
     private function getUnit($json): ?\Courseware\Unit
     {
