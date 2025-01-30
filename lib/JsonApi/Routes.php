@@ -13,9 +13,10 @@ trait Routes
 
         $group->post('/courseware-flows', Routes\FlowCreate::class);
         $group->post('/courseware-flows/create-flows', Routes\FlowsCreate::class);
-
+        
+        $group->get('/courseware-flows/{id}/sync', Routes\FlowSync::class);
         $group->patch('/courseware-flows/{id}', Routes\FlowUpdate::class);
-
+        
         $group->delete('/courseware-flows/{id}', Routes\FlowDelete::class);
         $group->post('/units/{id}/courseware-flows', Routes\UnitFlowsDelete::class);
     }

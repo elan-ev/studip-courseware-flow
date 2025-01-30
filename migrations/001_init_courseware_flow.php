@@ -16,7 +16,7 @@ final class InitCoursewareFlow extends Migration
             `blocks_map`                    MEDIUMTEXT NOT NULL,
             `folders_map`                   MEDIUMTEXT NOT NULL,
             `files_map`                     MEDIUMTEXT NOT NULL,
-            `status`                        ENUM('idle', 'running', 'failed') NOT NULL DEFAULT 'idle',
+            `status`                        ENUM('idle', 'copying', 'syncing' 'failed') NOT NULL DEFAULT 'idle',
             `active`                        TINYINT(1) NOT NULL DEFAULT '1',
             `auto_sync`                     TINYINT(1) NOT NULL DEFAULT '0',
             `mkdate`                        INT(11) UNSIGNED NOT NULL,

@@ -25,6 +25,10 @@ use SimpleORMap;
  */
 class Flow extends SimpleORMap
 {
+    public const STATUS_IDLE = 'idle';
+    public const STATUS_COPYING = 'copying';
+    public const STATUS_SYNCING = 'syncing';
+    public const STATUS_FAILED = 'failed';
 
     protected static function configure($config = [])
     {
