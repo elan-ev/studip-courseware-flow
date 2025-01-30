@@ -87,7 +87,8 @@ class FlowsCreate extends JsonApiController
         $flow->structural_elements_image_map = json_encode($target['structural_elements_image_map']);
         $flow->container_map = json_encode($target['container_map']);
         $flow->blocks_map = json_encode($target['blocks_map']);
-
+        $flow->files_map = json_encode($target['files_map']);
+        $flow->folders_map = json_encode($target['folders_map']);
         $flow->store();
     }
 

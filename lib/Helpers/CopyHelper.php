@@ -62,6 +62,8 @@ class CopyHelper
         $structural_elements_image_map = [];
         $container_map = [];
         $blocks_map = [];
+        $files_map = [];
+        $folders_map = [];
 
         addToMap($structural_elements_map, $source_unit_structural_element->id, $target_unit_structural_element->id);
 
@@ -76,8 +78,8 @@ class CopyHelper
 
         //simulate delay
         // sleep(10);
-        self::copyContainers($user, $target_unit_structural_element, $source_unit_structural_element, $container_map, $blocks_map);
-        self::copyChildren($user, $target_unit_structural_element, $source_unit_structural_element, $structural_elements_map, $structural_elements_image_map, $container_map, $blocks_map);
+        self::copyContainers($user, $target_unit_structural_element, $source_unit_structural_element, $container_map, $blocks_map, $files_map, $folders_map);
+        self::copyChildren($user, $target_unit_structural_element, $source_unit_structural_element, $structural_elements_map, $structural_elements_image_map, $container_map, $blocks_map, $files_map, $folders_map);
 
         return [
             'target_unit_structural_element' => $target_unit_structural_element,
@@ -85,6 +87,8 @@ class CopyHelper
             'structural_elements_image_map' => $structural_elements_image_map,
             'container_map' => $container_map,
             'blocks_map' => $blocks_map,
+            'files_map' => $files_map,
+            'folders_map' => $folders_map
         ];
     }
 
@@ -115,7 +119,7 @@ class CopyHelper
         return null;
     }
 
-    private static function copyChildren(\User $user, StructuralElement $parent, StructuralElement $source, &$structural_elements_map, &$structural_elements_image_map,  &$container_map, &$blocks_map): array
+    private static function copyChildren(\User $user, StructuralElement $parent, StructuralElement $source, &$structural_elements_map, &$structural_elements_image_map,  &$container_map, &$blocks_map, &$files_map, &$folders_map): array
     {
 
         foreach ($source->children as $child) {
@@ -144,8 +148,8 @@ class CopyHelper
                 $new_child->store();
             }
 
-            self::copyChildren($user, $new_child, $child, $structural_elements_map, $structural_elements_image_map, $container_map, $blocks_map);
-            self::copyContainers($user, $new_child, $child, $container_map, $blocks_map);
+            self::copyChildren($user, $new_child, $child, $structural_elements_map, $structural_elements_image_map, $container_map, $blocks_map, $files_map, $folders_map);
+            self::copyContainers($user, $new_child, $child, $container_map, $blocks_map, $files_map, $folders_map);
         }
 
         return [
@@ -156,7 +160,7 @@ class CopyHelper
         ];
     }
 
-    private static function copyContainers($user, $target_element, $source_element, &$container_map, &$blocks_map): array
+    private static function copyContainers($user, $target_element, $source_element, &$container_map, &$blocks_map, &$files_map, &$folders_map): array
     {
         foreach ($source_element->containers as $container) {
             $new_container = Container::create([
@@ -170,18 +174,20 @@ class CopyHelper
             ]);
 
             addToMap($container_map, $container->id, $new_container->id);
-            self::copyBlocks($user, $new_container, $container, $blocks_map);
+            self::copyBlocks($user, $new_container, $container, $blocks_map, $files_map, $folders_map);
         }
 
         return [$container_map, $blocks_map];
     }
 
-    private static function copyBlocks($user, $target_container, $source_container, &$blocks_map): array
+    private static function copyBlocks($user, $target_container, $source_container, &$blocks_map, &$files_map, &$folders_map): array
     {
         $newBlockList = [];
 
         foreach ($source_container->blocks as $block) {
             $newBlock = $block->copy($user, $target_container); // map new file and folder ids. Each block has its own payload and way to store file id information
+            self::mapFiles($files_map, $newBlock, $block);
+            self::mapFolders($folders_map, $newBlock, $block);
             addToMap($blocks_map, $block->id, $newBlock->id);
             $newBlockList[$block->id] = $newBlock;
         }
@@ -189,4 +195,42 @@ class CopyHelper
         return [$blocks_map, $newBlockList];
     }
 
+    private static function mapFiles(&$files_map, $target_block, $source_block): void
+    {
+        $source_payload = $source_block->type->getPayload();
+        $target_payload = $target_block->type->getPayload();
+
+        switch ($source_block->block_type) {
+            case 'audio':
+            case 'canvas':
+            case 'document':
+            case 'download':
+            case 'image-map':
+            case 'video':
+                addToMap($files_map, $source_payload['file_id'], $target_payload['file_id']);
+                break;
+            case 'before-after':
+                break;
+            case 'dialog-cards':
+                break;
+            case 'headline':
+                break;
+            case 'text':
+                break;
+        }
+    }
+
+    private static function mapFolders(&$folders_map, $target_block, $source_block): void
+    {
+        $source_payload = $source_block->type->getPayload();
+        $target_payload = $target_block->type->getPayload();
+
+        switch ($source_block->block_type) {
+            case 'folder':
+            case 'gallery':
+                addToMap($folders_map, $source_payload['folder_id'], $target_payload['folder_id']);
+                    break;
+
+        }
+    }
 }
