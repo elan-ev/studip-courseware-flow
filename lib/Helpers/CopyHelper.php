@@ -116,9 +116,10 @@ class CopyHelper
             $first_folder = array_key_first($folders_map);
             $parent_folder = \Folder::find($folders_map[$first_folder])->getParent();
         }
-
-        $parent_folder->__set('name',  str_replace('🔄 ', $source_unit_structural_element->title));
-        $parent_folder->store();
+        if ($parent_folder) {
+            $parent_folder->__set('name',  str_replace('🔄 ', $source_unit_structural_element->title));
+            $parent_folder->store();
+        }
 
         return [
             'target_unit_structural_element' => $target_unit_structural_element,
