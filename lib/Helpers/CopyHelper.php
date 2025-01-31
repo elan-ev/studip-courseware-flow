@@ -10,8 +10,6 @@ function addToMap(array &$map, string $key, string $value): void
 {
     if (!isset($map[$key])) {
         $map[$key] = $value;
-    } else {
-        throw new \Exception("Duplicate key: $key");
     }
 }
 
