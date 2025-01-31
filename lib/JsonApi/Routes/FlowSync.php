@@ -25,13 +25,13 @@ class FlowSync extends JsonApiController
             throw new AuthorizationFailedException();
         }
 
-        $updated_resource = $this->syncFlow($resource);
+        $updated_resource = $this->syncFlow($resource, $user);
 
         return $this->getContentResponse($updated_resource);
     }
 
-    private function syncFlow(Flow $resource) : Flow
+    private function syncFlow(Flow $resource, $user) : Flow
     {
-        return SyncHelper::syncFlow($resource);
+        return SyncHelper::syncFlow($resource, $user);
     }
 }

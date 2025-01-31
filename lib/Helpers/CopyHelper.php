@@ -39,7 +39,28 @@ class CopyHelper
         return $target_data;
     }
 
-    private static function copyUnitContent($user, $source_unit, $target_course_id)
+    public static function copyStructuralElement($user, $source_structural_element, $target_parent): StructuralElement
+    {
+        $target_structural_element = StructuralElement::build([
+            'parent_id' => $target_parent->id,
+            'range_id' => $target_parent->range_id,
+            'range_type' => $target_parent->range_type,
+            'owner_id' => $user->id,
+            'editor_id' => $user->id,
+            'edit_blocker_id' => null,
+            'title' => $source_structural_element->title,
+            'purpose' => $source_structural_element->purpose,
+            'position' => $source_structural_element->position,
+            'payload' => $source_structural_element->payload,
+            'commentable' => $source_structural_element->commentable
+        ]);
+
+        $target_structural_element->store();
+
+        return $target_structural_element;
+    }
+
+    protected static function copyUnitContent($user, $source_unit, $target_course_id)
     {
         $source_unit_structural_element = $source_unit->structural_element;
 
@@ -94,7 +115,7 @@ class CopyHelper
 
 
 
-    private static function copyStructuralElementImage(\User $user, StructuralElement $source, StructuralElement $target): ?string
+    protected static function copyStructuralElementImage(\User $user, StructuralElement $source, StructuralElement $target): ?string
     {
         if ($source->image_type === \StockImage::class) {
             return $source->image_id;
@@ -119,7 +140,7 @@ class CopyHelper
         return null;
     }
 
-    private static function copyChildren(\User $user, StructuralElement $parent, StructuralElement $source, &$structural_elements_map, &$structural_elements_image_map,  &$container_map, &$blocks_map, &$files_map, &$folders_map): array
+    protected static function copyChildren(\User $user, StructuralElement $parent, StructuralElement $source, &$structural_elements_map, &$structural_elements_image_map,  &$container_map, &$blocks_map, &$files_map, &$folders_map): array
     {
 
         foreach ($source->children as $child) {
@@ -160,7 +181,7 @@ class CopyHelper
         ];
     }
 
-    private static function copyContainers($user, $target_element, $source_element, &$container_map, &$blocks_map, &$files_map, &$folders_map): array
+    protected static function copyContainers($user, $target_element, $source_element, &$container_map, &$blocks_map, &$files_map, &$folders_map): array
     {
         foreach ($source_element->containers as $container) {
             $new_container = Container::create([
@@ -180,7 +201,7 @@ class CopyHelper
         return [$container_map, $blocks_map];
     }
 
-    private static function copyBlocks($user, $target_container, $source_container, &$blocks_map, &$files_map, &$folders_map): array
+    protected static function copyBlocks($user, $target_container, $source_container, &$blocks_map, &$files_map, &$folders_map): array
     {
         $newBlockList = [];
 
@@ -195,7 +216,7 @@ class CopyHelper
         return [$blocks_map, $newBlockList];
     }
 
-    private static function mapFiles(&$files_map, $target_block, $source_block): void
+    protected static function mapFiles(&$files_map, $target_block, $source_block): void
     {
         $source_payload = $source_block->type->getPayload();
         $target_payload = $target_block->type->getPayload();
@@ -220,7 +241,7 @@ class CopyHelper
         }
     }
 
-    private static function mapFolders(&$folders_map, $target_block, $source_block): void
+    protected static function mapFolders(&$folders_map, $target_block, $source_block): void
     {
         $source_payload = $source_block->type->getPayload();
         $target_payload = $target_block->type->getPayload();
