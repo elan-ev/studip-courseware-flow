@@ -40,7 +40,19 @@ class UnitFlowsDelete extends JsonApiController
                 if ($target_unit) {
                     $target_unit->delete();
                 }
+            } else {
+                $target_element = \Courseware\Unit::find($flow->target_unit_id)->structural_element;
+                if ($target_element) {
+                    $target_element->title = str_replace('🔄 ', '', $target_element->title);
+                    $target_element->store();
+                }
             }
+            $source_element = \Courseware\Unit::find($flow->source_unit_id)->structural_element;
+            if ($source_element) {
+                $source_element->title = str_replace('🔄 ', '', $source_element->title);
+                $source_element->store();
+            }
+
             $flow->delete();
         }
 

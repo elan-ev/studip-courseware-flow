@@ -121,6 +121,7 @@ class SyncHelper
 
         //todo: image_id && image_ref
         //todo: sync containers
+        self::syncContainers($flow, $source_element, $target_element);
 
 
         if ($has_changes) {
@@ -133,17 +134,12 @@ class SyncHelper
                 self::syncStructuralElements($flow, $target_child, $child);
             }
         }
-
-        //todo: sync blocks
-        //todo: sync files
-        //todo: sync folders
-        
-    
     }
 
-    private static function syncContainers($source_course_id, $target_course_id): void
+    private static function syncContainers(&$flow, $source_element, $target_element): void
     {
-
+        // $source_element->containers
+        // $target_element->containers
     }
 
     private static function syncBlocks($source_course_id, $target_course_id): void

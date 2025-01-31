@@ -3,10 +3,12 @@ import { defineStore } from 'pinia';
 import { api } from '../api.js';
 import { useContextStore } from './context';
 import { useCoursesStore } from './courses';
+import { useUnitsStore } from './units';
 
 export const useFlowsStore = defineStore('courseware-flows', () => {
     const contextStore = useContextStore();
     const coursesStore = useCoursesStore();
+    const unitsStore = useUnitsStore();
 
     const records = ref(new Map());
     const inProgress = ref(false);
@@ -95,6 +97,7 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
             })
             .then(({ data }) => {
                 data.forEach(storeRecord);
+                unitsStore.fetchById(data['source-unit-id']);
                 inProgress.value = false;
             })
             .catch((err) => {
@@ -103,7 +106,8 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
             });
         
         setTimeout(() => {
-            fetchCourseFlows()
+            fetchCourseFlows();
+            unitsStore.fetchById(data['source-unit-id']);
         }, 1000);
     }
 
@@ -142,7 +146,9 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
                     if (record.source_unit.data.id === unitId) {
                         records.value.delete(record.id);
                     }
+                    unitsStore.fetchById(unitId);
                 });
+
                 inProgress.value = false;
             })
             .catch((err) => {

@@ -62,6 +62,11 @@ class CopyHelper
     {
         $source_unit_structural_element = $source_unit->structural_element;
 
+        if (mb_strpos( $source_unit_structural_element->title, '🔄') === false) {
+            $source_unit_structural_element->title = '🔄 ' .  $source_unit_structural_element->title;
+            $source_unit_structural_element->store();
+        }
+
         $target_unit_structural_element = StructuralElement::build([
             'parent_id' => null,
             'range_id' => $target_course_id,
