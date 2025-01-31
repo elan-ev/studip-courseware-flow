@@ -90,14 +90,15 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
 
     async function createFlows(data) {
         inProgress.value = true;
+        const sourceUnitId = data['source-unit-id'];
         api
             .create(`/courseware-flows/create-flows`, {
-                'source-unit-id': data['source-unit-id'],
+                'source-unit-id': sourceUnitId,
                 'target-course-ids': data['target-course-ids'],
             })
             .then(({ data }) => {
                 data.forEach(storeRecord);
-                unitsStore.fetchById(data['source-unit-id']);
+                unitsStore.fetchById(sourceUnitId);
                 inProgress.value = false;
             })
             .catch((err) => {
@@ -107,7 +108,7 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
         
         setTimeout(() => {
             fetchCourseFlows();
-            unitsStore.fetchById(data['source-unit-id']);
+            unitsStore.fetchById(sourceUnitId);
         }, 1000);
     }
 
