@@ -87,10 +87,6 @@ class SyncHelper
             $flow->structural_elements_map = json_encode($flow_map);
             $flow->store();
         }
-
-        die();
-
-
     }
 
     private static function syncStructuralElements(Flow &$flow, StructuralElement $target_element, StructuralElement $source_element): void
@@ -124,11 +120,23 @@ class SyncHelper
         }
 
         //todo: image_id && image_ref
+        //todo: sync containers
 
 
         if ($has_changes) {
             $target_element->store();
         }
+
+        foreach ($source_element->children as $child) {
+            $target_child = StructuralElement::find($flow->structural_elements_map[$child->id]);
+            if ($target_child) {
+                self::syncStructuralElements($flow, $target_child, $child);
+            }
+        }
+
+        //todo: sync blocks
+        //todo: sync files
+        //todo: sync folders
         
     
     }
