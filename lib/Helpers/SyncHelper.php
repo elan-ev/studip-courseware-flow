@@ -121,9 +121,9 @@ class SyncHelper
         }
 
         //todo: image_id && image_ref
-        //todo: sync containers
+        
         self::syncContainers($flow, $source_element, $target_element, $user);
-die();
+
 
         if ($has_changes) {
             $target_element->store();
@@ -139,20 +139,35 @@ die();
 
     private static function syncContainers(&$flow, $source_element, $target_element, $user): void
     {
-        $deletable_containers = array_map($target_element->containers, 'id');
+        $deletable_containers = array_column($target_element->containers->toArray(), 'id');
 
         self::syncBlocksQuantity($flow, $source_element, $target_element, $user);
+
+        $container_map = json_decode($flow->container_map, true);
+        $blocks_map = json_decode($flow->blocks_map, true);
+        $files_map = json_decode($flow->files_map, true);
+        $folders_map = json_decode($flow->folders_map, true);
+        $map_changed = false;
 
         foreach ($source_element->containers as $container) {
             $target_container = Container::find($flow->container_map[$container->id]);
             if ($target_container) { 
-                unset($deletable_containers, $target_container->id);
-                self::syncContainerPayload($flow, $target_container, $container, $user);
+                $deletable_containers = array_diff($deletable_containers, [$target_container->id]);
+                
+                self::syncContainerAttributes($flow, $target_container, $container, $user);
                 // todo: self::syncBlocks();
             } else {
-                CopyHelper::copyContainer($user, $target_element, $container, $flow->container_map, $flow->blocks_map, $flow->files_map, $flow->folders_map);
+                CopyHelper::copyContainer($user, $target_element, $container, $container_map, $blocks_map, $files_map, $folders_map);
                 $flow->store();
             }
+        }
+
+        if ($map_changed) {
+            $flow->container_map = json_encode($container_map);
+            $flow->blocks_map = json_encode($blocks_map);
+            $flow->files_map = json_encode($files_map);
+            $flow->folders_map = json_encode($folders_map);
+            $flow->store();
         }
         
         if (sizeof($deletable_containers) > 0) {
@@ -214,8 +229,10 @@ die();
 
     }
 
-    private static function syncContainerPayload(Flow $flow, Container $target_container, Container $source_container, $user): void
+    private static function syncContainerAttributes(Flow $flow, Container $target_container, Container $source_container, $user): void
     {
+        $target_container->position = $source_container->position;
+
         $source_payload = json_decode($source_container->payload, true);
         $target_payload = json_decode($target_container->payload, true);
         // sync settings
@@ -238,6 +255,8 @@ die();
         }
 
         // store target container
+        $target_container->payload = json_encode($target_payload);
+        $target_container->store();
     }
 
     private static function syncBlocks(): void
