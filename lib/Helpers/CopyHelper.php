@@ -109,15 +109,22 @@ class CopyHelper
         // rename filesystem folder
         $parent_folder = null;
         if (sizeof($files_map) > 0) {
+            var_dump($files_map);
+            
             $first_file = array_key_first($files_map);
-            $parent_folder = \Folder::find($files_map[$first_file])->getParent();
+
+            var_dump($first_file);
+
+            var_dump($files_map[$first_file]);
+
+            $parent_folder = \FileRef::find($files_map[$first_file])->folder;
         }
         if (!$parent_folder  && sizeof($folders_map) > 0) {
             $first_folder = array_key_first($folders_map);
-            $parent_folder = \Folder::find($folders_map[$first_folder])->getParent();
+            $parent_folder = \Folder::find($folders_map[$first_folder])->parentfolder;
         }
         if ($parent_folder) {
-            $parent_folder->__set('name',  str_replace('🔄 ', $source_unit_structural_element->title));
+            $parent_folder->__set('name',  'Courseware - ' . str_replace('🔄 ', '', $source_unit_structural_element->title));
             $parent_folder->store();
         }
 
