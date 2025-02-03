@@ -12,13 +12,13 @@ class SyncHelper
 {
     public static function syncFlow(Flow $flow, $user): Flow
     {
-        // $flow->status = Flow::STATUS_SYNCING;
-        // $flow->store();
+        $flow->status = Flow::STATUS_SYNCING;
+        $flow->store();
 
         self::syncUnit($flow, $user);
 
-        // $flow->status = Flow::STATUS_IDLE;
-        // $flow->store();
+        $flow->status = Flow::STATUS_IDLE;
+        $flow->store();
         
         return $flow;
     } 
@@ -141,7 +141,6 @@ class SyncHelper
         
         self::syncContainers($flow, $source_element, $target_element, $user);
 
-
         if ($has_changes) {
             $flow->structural_elements_image_map = json_encode($structural_elements_image_map);
             $flow->store();
@@ -223,7 +222,7 @@ class SyncHelper
             if ($target_block_id) {
                 $deletable_blocks = array_diff($deletable_blocks, [$target_block_id]);
                 $target_block = Block::find($target_block_id);
-                self::syncBlock($target_block, $block, $files_map, $folders_map, $map_changed);
+                self::syncBlock($flow, $target_block, $block, $files_map, $folders_map, $map_changed);
             } else {
                 $target_container = Container::find($flow->container_map[$block->container_id]);
 
@@ -262,7 +261,6 @@ class SyncHelper
             $target_payload['sections'][$index]['name'] = $section['name'];
             $target_payload['sections'][$index]['icon'] = $section['icon'];
 
-            //todo: sync block ids and sort use block_map
             $target_block_list = [];
             foreach ($section['blocks'] as $block_id) {
                 $target_block = Block::find($flow->blocks_map[$block_id]);
@@ -278,7 +276,7 @@ class SyncHelper
         $target_container->store();
     }
 
-    private static function syncBlock($target_block, $source_block, &$files_map, &$folders_map, &$map_changed): void
+    private static function syncBlock(Flow &$flow, Block $target_block, Block $source_block, &$files_map, &$folders_map, &$map_changed): void
     {
         if (!$target_block ||!$source_block) {
             return;
@@ -290,12 +288,116 @@ class SyncHelper
         $target_payload = $source_payload;
 
         // update file and folder ids with maps
+        $target_payload = self::updateFileIds($flow, $target_block, $source_block, $files_map);
+        $target_payload = self::updateFolderIds($flow, $target_payload, $source_block, $folders_map);
 
         // special handling for link blocks
 
-
         $target_block->payload = json_encode($target_payload);
         $target_block->store();
+    }
+
+    private static function updateFileIds(Flow &$flow, $target_block, $source_block, &$files_map, $user): Array
+    {
+        $source_payload = $source_block->type->getPayload();
+        $target_payload = json_decode($target_block->payload, true);
+
+        switch ($source_block->block_type) {
+            case 'audio':
+            case 'canvas':
+            case 'document':
+            case 'download':
+            case 'image-map':
+            case 'video':
+                if (isset($files_map[$source_payload['file_id']])) {
+                    $target_payload['file_id'] = $files_map[$source_block->id];
+                } else {
+                    if ($source_payload['file_id'] !== '') {
+                        // copy file and update map
+                        $copied_file_id = self::copyFileById($flow,$user, $source_payload['file_id']);
+                        $target_payload['file_id'] = $copied_file_id;
+                        addToMap($files_map, $source_payload['file_id'], $copied_file_id);
+                    } else {
+                        $target_payload['file_id'] = '';
+                    }
+                }
+                break;
+            case 'before-after':
+                break;
+            case 'dialog-cards':
+                break;
+            case 'headline':
+                break;
+            case 'text':
+                break;
+        }
+
+        return $target_payload;
+    }
+
+    private static function updateFolderIds(Flow &$flow, $target_payload, $source_block, &$files_map): Array
+    {
+        $source_payload = $source_block->type->getPayload();
+
+        switch ($source_block->block_type) {
+            case 'folder':
+            case 'gallery':
+                // is source folder id in map?
+                if (isset($files_map[$source_payload['folder_id']])) {
+                    $target_payload['folder_id'] = $files_map[$source_block->id];
+                } else {
+                    if ($source_payload['folder_id'] !== '') {
+                        // copy folder and update map
+                        $target_payload['folder_id'] = self::copyFolder();
+                    } else {
+                        $target_payload['folder_id'] = '';
+                    }
+                    // if source has a folder id
+                    // copy folder and update map
+                    // else set target_payload to empty
+                }
+                break;
+        }
+
+        return $target_payload;
+    }
+
+        /**
+     * Copies a file to a specified range.
+     *
+     * @param string $fileId  the ID of the file
+     * @param string $rangeId the ID of the range
+     *
+     * @return string the ID of the copy
+     */
+    private static function copyFileById($flow, $user, string $source_file_id): string
+    {
+        $file_ref = \FileRef::find($source_file_id);
+
+        if (!$file_ref) {
+            return '';
+        }
+
+        if (!$flow->target_folder) {
+            $flow->createTargetFolder($user);
+        }
+
+        $copiedFile = \FileManager::copyFile(
+            $file_ref->getFiletype(),
+            $flow->target_folder,
+            $user
+        );
+
+        if (is_object($copiedFile)) {
+            return $copiedFile->id;
+        }
+
+        return '';
+    }
+
+    private static function copyFolderById($flow, $user, string $source_folder_id, string $target_range_id): string
+    {
+        return ''; // not implemented yet
     }
 
 }
