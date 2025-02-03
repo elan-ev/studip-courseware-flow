@@ -101,22 +101,13 @@ class CopyHelper
             addToMap($structural_elements_image_map, $source_unit_structural_element->image_id, $target_unit_structural_element->image_id);
         }
 
-        //simulate delay
-        // sleep(10);
         self::copyContainers($user, $target_unit_structural_element, $source_unit_structural_element, $container_map, $blocks_map, $files_map, $folders_map);
         self::copyChildren($user, $target_unit_structural_element, $source_unit_structural_element, $structural_elements_map, $structural_elements_image_map, $container_map, $blocks_map, $files_map, $folders_map);
 
         // rename filesystem folder
         $parent_folder = null;
         if (sizeof($files_map) > 0) {
-            var_dump($files_map);
-            
             $first_file = array_key_first($files_map);
-
-            var_dump($first_file);
-
-            var_dump($files_map[$first_file]);
-
             $parent_folder = \FileRef::find($files_map[$first_file])->folder;
         }
         if (!$parent_folder  && sizeof($folders_map) > 0) {
@@ -141,7 +132,7 @@ class CopyHelper
 
 
 
-    protected static function copyStructuralElementImage(\User $user, StructuralElement $source, StructuralElement $target): ?string
+    public static function copyStructuralElementImage(\User $user, StructuralElement $source, StructuralElement $target): ?string
     {
         if ($source->image_type === \StockImage::class) {
             return $source->image_id;

@@ -7,6 +7,7 @@ use \Courseware\Container;
 use \Courseware\StructuralElement;
 use \Courseware\Unit;
 use CoursewareFlow\Models\Flow;
+
 class SyncHelper
 {
     public static function syncFlow(Flow $flow, $user): Flow
@@ -92,6 +93,7 @@ class SyncHelper
 
     private static function syncStructuralElements(Flow &$flow, StructuralElement $target_element, StructuralElement $source_element, $user): void
     {
+        $structural_elements_image_map = json_decode($flow->structural_elements_image_map, true);
         $has_changes = false;
 
         $fields = ['commentable', 'position', 'purpose', 'title', 'release_date', 'withdraw_date']; // ??? release_date and withdraw_date ???
@@ -120,12 +122,29 @@ class SyncHelper
             }
         }
 
-        //todo: image_id && image_ref
+        // sync structural element image
+        if ($source_element->image_id) {
+            if (!array_key_exists($source_element->image_id, $structural_elements_image_map) || $structural_elements_image_map[$source_element->image_id] != $target_element->image_id) {
+                $target_element->image_id = CopyHelper::copyStructuralElementImage($user, $source_element, $target_element);
+                addToMap($structural_elements_image_map, $source_element->image_id, $target_element->image_id);
+                $has_changes = true;
+            }
+        } else {
+            $target_element->image_id = null;
+            $has_changes = true;
+        }
+
+        if ($target_element->image_type !== $source_element->image_type) {
+            $target_element->image_type = $source_element->image_type;
+            $has_changes = true;
+        }
         
         self::syncContainers($flow, $source_element, $target_element, $user);
 
 
         if ($has_changes) {
+            $flow->structural_elements_image_map = json_encode($structural_elements_image_map);
+            $flow->store();
             $target_element->store();
         }
 
