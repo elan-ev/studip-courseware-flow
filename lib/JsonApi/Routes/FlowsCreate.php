@@ -89,6 +89,7 @@ class FlowsCreate extends JsonApiController
         $flow->blocks_map = json_encode($target['blocks_map']);
         $flow->files_map = json_encode($target['files_map']);
         $flow->folders_map = json_encode($target['folders_map']);
+        $flow->target_folder_id = $target['target_folder_id'];
         $flow->store();
     }
 
