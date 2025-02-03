@@ -18,6 +18,7 @@ use SimpleORMap;
  * @property string $structural_elements_map database column
  * @property string $container_map database column
  * @property string $blocks_map database column
+ * @property string $target_folder_id database column
  * @property string $status database column
  * @property bool $active database column
  * @property bool $auto_sync database column
@@ -62,6 +63,30 @@ class Flow extends SimpleORMap
             'foreign_key' => 'target_unit_id',
         ];
 
+        $config['belongs_to']['target_folder'] = [
+            'class_name'  => \Folder::class,
+            'foreign_key' => 'target_folder_id',
+        ];
+
         parent::configure($config);
+    }
+
+    public function createTargetFolder($user): void
+    {
+        $rootFolder = \Folder::findTopFolder($this->target_course_id);
+        $targetFolderName = 'Courseware - ' . str_replace('🔄 ', '', $this->source_unit->title);
+
+        $targetFolder = \FileManager::createSubFolder(
+            \FileManager::getTypedFolder($rootFolder->id),
+            $user,
+            'HiddenFolder',
+            $targetFolderName,
+            ''
+        );
+        $targetFolder->__set('download_allowed', 1);
+
+        $targetFolder->store();
+        $this->target_folder_id = $targetFolder->id;
+        $this->store();
     }
 }

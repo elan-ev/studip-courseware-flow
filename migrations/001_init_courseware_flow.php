@@ -16,6 +16,7 @@ final class InitCoursewareFlow extends Migration
             `blocks_map`                    MEDIUMTEXT NOT NULL,
             `folders_map`                   MEDIUMTEXT NOT NULL,
             `files_map`                     MEDIUMTEXT NOT NULL,
+            `target_folder_id`              CHAR(32) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
             `status`                        ENUM('idle', 'copying', 'syncing' 'failed') NOT NULL DEFAULT 'idle',
             `active`                        TINYINT(1) NOT NULL DEFAULT '1',
             `auto_sync`                     TINYINT(1) NOT NULL DEFAULT '0',
