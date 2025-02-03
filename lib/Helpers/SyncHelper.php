@@ -132,17 +132,16 @@ class SyncHelper
         foreach ($source_element->children as $child) {
             $target_child = StructuralElement::find($flow->structural_elements_map[$child->id]);
             if ($target_child) {
-                self::syncStructuralElements($flow, $target_child, $child);
+                self::syncStructuralElements($flow, $target_child, $child, $user);
             }
         }
     }
 
     private static function syncContainers(&$flow, $source_element, $target_element, $user): void
     {
-        $deletable_containers = array_column($target_element->containers->toArray(), 'id');
-
         self::syncBlocksQuantity($flow, $source_element, $target_element, $user);
 
+        $deletable_containers = array_column($target_element->containers->toArray(), 'id');
         $container_map = json_decode($flow->container_map, true);
         $blocks_map = json_decode($flow->blocks_map, true);
         $files_map = json_decode($flow->files_map, true);
@@ -155,7 +154,6 @@ class SyncHelper
                 $deletable_containers = array_diff($deletable_containers, [$target_container->id]);
                 
                 self::syncContainerAttributes($flow, $target_container, $container, $user);
-                // todo: self::syncBlocks();
             } else {
                 CopyHelper::copyContainer($user, $target_element, $container, $container_map, $blocks_map, $files_map, $folders_map);
                 $flow->store();
@@ -201,10 +199,12 @@ class SyncHelper
         $deletable_blocks = array_column($target_blocks, 'id');
 
         foreach($source_blocks as $block) {
-            $target_block = $flow->blocks_map[$block->id];
+            $target_block_id = $flow->blocks_map[$block->id];
             
-            if ($target_block) {
-                $deletable_blocks = array_diff($deletable_blocks, [$target_block]);
+            if ($target_block_id) {
+                $deletable_blocks = array_diff($deletable_blocks, [$target_block_id]);
+                $target_block = Block::find($target_block_id);
+                self::syncBlock($target_block, $block, $files_map, $folders_map, $map_changed);
             } else {
                 $target_container = Container::find($flow->container_map[$block->container_id]);
 
@@ -259,9 +259,24 @@ class SyncHelper
         $target_container->store();
     }
 
-    private static function syncBlocks(): void
+    private static function syncBlock($target_block, $source_block, &$files_map, &$folders_map, &$map_changed): void
     {
+        if (!$target_block ||!$source_block) {
+            return;
+        }
+        $source_payload = json_decode($source_block->payload, true);
+        $target_payload = json_decode($target_block->payload, true);
 
+        // overwrite all payload settings
+        $target_payload = $source_payload;
+
+        // update file and folder ids with maps
+
+        // special handling for link blocks
+
+
+        $target_block->payload = json_encode($target_payload);
+        $target_block->store();
     }
 
 }
