@@ -10,6 +10,13 @@ use CoursewareFlow\Models\Flow;
 
 class SyncHelper
 {
+
+    private static function addToMap(array &$map, string $key, string $value): void
+    {
+        if (!isset($map[$key])) {
+            $map[$key] = $value;
+        }
+    }
     public static function syncFlow(Flow $flow, $user): Flow
     {
         $flow->status = Flow::STATUS_SYNCING;
@@ -126,7 +133,7 @@ class SyncHelper
         if ($source_element->image_id) {
             if (!array_key_exists($source_element->image_id, $structural_elements_image_map) || $structural_elements_image_map[$source_element->image_id] != $target_element->image_id) {
                 $target_element->image_id = CopyHelper::copyStructuralElementImage($user, $source_element, $target_element);
-                addToMap($structural_elements_image_map, $source_element->image_id, $target_element->image_id);
+                self::addToMap($structural_elements_image_map, $source_element->image_id, $target_element->image_id);
                 $has_changes = true;
             }
         } else {
@@ -289,7 +296,8 @@ class SyncHelper
 
         // update file and folder ids with maps
         $target_payload = self::updateFileIds($flow, $user, $target_block, $source_block, $files_map);
-        $target_payload = self::updateFolderIds($flow, $user, $target_payload, $source_block, $folders_map);
+        // $target_payload = self::updateFolderIds($flow, $user, $target_payload, $source_block, $folders_map);
+
 
         // special handling for link blocks
 
@@ -310,12 +318,12 @@ class SyncHelper
             case 'image-map':
             case 'video':
                 if (isset($files_map[$source_payload['file_id']])) {
-                    $target_payload['file_id'] = $files_map[$source_block->id];
+                    $target_payload['file_id'] = $files_map[$source_payload['file_id']];
                 } else {
                     if ($source_payload['file_id'] !== '') {
                         $copied_file_id = self::copyFileById($flow,$user, $source_payload['file_id']);
                         $target_payload['file_id'] = $copied_file_id;
-                        addToMap($files_map, $source_payload['file_id'], $copied_file_id);
+                        self::addToMap($files_map, $source_payload['file_id'], $copied_file_id);
                     } else {
                         $target_payload['file_id'] = '';
                     }
@@ -384,7 +392,7 @@ class SyncHelper
 
         $copiedFile = \FileManager::copyFile(
             $file_ref->getFiletype(),
-            $flow->target_folder,
+            $flow->target_folder->getTypedFolder(),
             $user
         );
 

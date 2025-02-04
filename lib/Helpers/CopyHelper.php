@@ -7,15 +7,14 @@ use \Courseware\Container;
 use \Courseware\StructuralElement;
 use \Courseware\Unit;
 
-function addToMap(array &$map, string $key, string $value): void
-{
-    if (!isset($map[$key])) {
-        $map[$key] = $value;
-    }
-}
-
 class CopyHelper
 {
+    private static function addToMap(array &$map, string $key, string $value): void
+    {
+        if (!isset($map[$key])) {
+            $map[$key] = $value;
+        }
+    }
     public static function copyUnit($user, $source_unit, $target_course_id): array
     {
         $target_data = self::copyUnitContent($user, $source_unit, $target_course_id);
@@ -90,7 +89,7 @@ class CopyHelper
         $files_map = [];
         $folders_map = [];
 
-        addToMap($structural_elements_map, $source_unit_structural_element->id, $target_unit_structural_element->id);
+        self::addToMap($structural_elements_map, $source_unit_structural_element->id, $target_unit_structural_element->id);
 
         $image_id = self::copyStructuralElementImage($user, $source_unit_structural_element, $target_unit_structural_element);
 
@@ -98,7 +97,7 @@ class CopyHelper
             $target_unit_structural_element->image_id = $image_id;
             $target_unit_structural_element->image_type = $source_unit_structural_element->image_type;
             $target_unit_structural_element->store();
-            addToMap($structural_elements_image_map, $source_unit_structural_element->image_id, $target_unit_structural_element->image_id);
+            self::addToMap($structural_elements_image_map, $source_unit_structural_element->image_id, $target_unit_structural_element->image_id);
         }
 
         self::copyContainers($user, $target_unit_structural_element, $source_unit_structural_element, $container_map, $blocks_map, $files_map, $folders_map);
@@ -177,7 +176,7 @@ class CopyHelper
             ]);
             $new_child->store();
 
-            addToMap($structural_elements_map, $child->id, $new_child->id);
+            self::addToMap($structural_elements_map, $child->id, $new_child->id);
 
             $image_id = self::copyStructuralElementImage($user, $child, $new_child);
 
@@ -218,7 +217,7 @@ class CopyHelper
             'payload' => $source_container->payload,
         ]);
 
-        addToMap($container_map, $source_container->id, $new_container->id);
+        self::addToMap($container_map, $source_container->id, $new_container->id);
         self::copyBlocks($user, $new_container, $source_container, $blocks_map, $files_map, $folders_map);
         self::updateSections($user, $new_container, $source_container, $blocks_map);
     }
@@ -229,7 +228,7 @@ class CopyHelper
             $newBlock = $block->copy($user, $target_container); // map new file and folder ids. Each block has its own payload and way to store file id information
             self::mapFiles($files_map, $newBlock, $block);
             self::mapFolders($folders_map, $newBlock, $block);
-            addToMap($blocks_map, $block->id, $newBlock->id);
+            self::addToMap($blocks_map, $block->id, $newBlock->id);
         }
     }
 
@@ -255,7 +254,7 @@ class CopyHelper
         $newBlock = $source_block->copy($user, $target_container);
         self::mapFiles($files_map, $newBlock, $source_block);
         self::mapFolders($folders_map, $newBlock, $source_block);
-        addToMap($blocks_map, $source_block->id, $newBlock->id);
+        self::addToMap($blocks_map, $source_block->id, $newBlock->id);
 
         return $newBlock;
     }
@@ -271,7 +270,7 @@ class CopyHelper
             case 'download':
             case 'image-map':
             case 'video':
-                addToMap($files_map, $source_payload['file_id'], $target_payload['file_id']);
+                self::addToMap($files_map, $source_payload['file_id'], $target_payload['file_id']);
                 break;
             case 'before-after':
                 break;
@@ -292,7 +291,7 @@ class CopyHelper
         switch ($source_block->block_type) {
             case 'folder':
             case 'gallery':
-                addToMap($folders_map, $source_payload['folder_id'], $target_payload['folder_id']);
+                self::addToMap($folders_map, $source_payload['folder_id'], $target_payload['folder_id']);
                     break;
 
         }
