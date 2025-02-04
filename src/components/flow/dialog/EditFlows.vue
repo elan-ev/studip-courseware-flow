@@ -81,6 +81,9 @@ const updateOpen = (value) => {
 
 const toggleActiveFlow = (flow, newStatus) => {
     flow.active = newStatus;
+    if (!newStatus) {
+        flow.auto_sync = false;
+    }
     flowsStore.updateFlow(flow);
 };
 
@@ -189,6 +192,7 @@ onMounted(() => {
                             <input
                                 type="checkbox"
                                 :checked="flow.auto_sync"
+                                :disabled="!flow.active"
                                 @change="toggleAutoSyncFlow(flow, $event.target.checked)"
                             />
                         </td>
@@ -199,7 +203,16 @@ onMounted(() => {
                                 :context="$gettext('Verteiltes Lernmaterial')"
                                 :items="
                                     [
-                                        { id: 2, label: $gettext('Synchronisieren'), icon: 'refresh', emit: 'sync' },
+                                        ...(flow.active
+                                            ? [
+                                                  {
+                                                      id: 2,
+                                                      label: $gettext('Synchronisieren'),
+                                                      icon: 'refresh',
+                                                      emit: 'sync',
+                                                  },
+                                              ]
+                                            : []),
                                     ].concat(
                                         unitFlows.length > 1
                                             ? [{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }]
