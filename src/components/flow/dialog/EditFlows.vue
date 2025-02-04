@@ -109,7 +109,7 @@ const deleteFlow = async (withUnit) => {
 
 const syncFlow = (flow) => {
     flowsStore.syncFlow(flow);
-}
+};
 
 watch(
     () => props.open,
@@ -129,8 +129,8 @@ onMounted(() => {
 
 <template>
     <StudipDialog
-        :height="600"
-        :width="800"
+        :height="768"
+        :width="1024"
         :title="$gettext('Verteilung bearbeiten')"
         :close-text="$gettext('Schließen')"
         :open="open"
@@ -138,6 +138,15 @@ onMounted(() => {
     >
         <template #dialogContent>
             <table class="default">
+                <colgroup>
+                    <col :width="250" />
+                    <col :width="100" />
+                    <col :width="100" />
+                    <col :width="100" />
+                    <col :width="150" />
+                    <col :width="150" />
+                    <col :width="50" />
+                </colgroup>
                 <thead>
                     <tr>
                         <th>{{ $gettext('Veranstaltung') }}</th>
@@ -146,13 +155,29 @@ onMounted(() => {
                         <th>{{ $gettext('automatisches Synchronisieren') }}</th>
                         <th>{{ $gettext('letzte Aktualisierung') }}</th>
                         <th>{{ $gettext('erstellt am') }}</th>
-                        <th>{{ $gettext('Aktion') }}</th>
+                        <th class="actions">{{ $gettext('Aktion') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="flow in unitFlows" :key="flow.id">
                         <td>{{ flow.target_course.attributes?.title || '---' }}</td>
-                        <td>{{ flow.status }}</td>
+                        <td>
+                            {{
+                                flow.active
+                                    ? $gettext(
+                                          flow.status === 'idle'
+                                              ? 'bereit'
+                                              : flow.status === 'syncing'
+                                              ? 'synchronisiere'
+                                              : flow.status === 'copying'
+                                              ? 'kopiere'
+                                              : flow.status === 'failed'
+                                              ? 'fehlgeschlagen'
+                                              : 'unbekannt'
+                                      )
+                                    : $gettext('deaktiviert')
+                            }}
+                        </td>
                         <td>
                             <input
                                 type="checkbox"
