@@ -158,6 +158,24 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
             });
     }
 
+    function syncFlow(flow) {
+        inProgress.value = true;
+        api.patch(`courseware-flows/${flow.id}/sync`);
+        setTimeout(() => {
+            fetchById(flow.id);
+            inProgress.value = false;
+        }, 1000);
+    }
+
+    function syncUnitFlows(unitId) {
+        inProgress.value = true;
+        api.patch(`units/${unitId}/courseware-flows/sync`);
+        setTimeout(() => {
+            fetchUnitFlows(unitId);
+            inProgress.value = false;
+        }, 1000);
+    }
+
     return {
         records,
         inProgress,
@@ -172,5 +190,7 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
         updateFlow,
         deleteFlow,
         deleteUnitFlows,
+        syncFlow,
+        syncUnitFlows,
     };
 });

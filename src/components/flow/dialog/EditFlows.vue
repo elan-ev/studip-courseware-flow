@@ -60,7 +60,7 @@ const updateExcludedCourses = () => {
     const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit.data.id === currentUnit.value.id);
 
     excludedCourses.value = [...relevantFlows.map((flow) => flow.target_course.data.id), contextStore.cid];
-}
+};
 
 const addCourse = async (value) => {
     if (value instanceof Event || !value) {
@@ -103,9 +103,13 @@ const showDeleteFlow = (flow) => {
 };
 
 const deleteFlow = async (withUnit) => {
-    await flowsStore.deleteFlow( currentFlow.value, withUnit);
+    await flowsStore.deleteFlow(currentFlow.value, withUnit);
     updateExcludedCourses();
 };
+
+const syncFlow = (flow) => {
+    flowsStore.syncFlow(flow);
+}
 
 watch(
     () => props.open,
@@ -149,19 +153,36 @@ onMounted(() => {
                     <tr v-for="flow in unitFlows" :key="flow.id">
                         <td>{{ flow.target_course.attributes?.title || '---' }}</td>
                         <td>{{ flow.status }}</td>
-                        <td><input type="checkbox" :checked="flow.active" @change="toggleActiveFlow(flow, $event.target.checked)" /></td>
-                        <td><input type="checkbox" :checked="flow.auto_sync" @change="toggleAutoSyncFlow(flow, $event.target.checked)" /></td>
+                        <td>
+                            <input
+                                type="checkbox"
+                                :checked="flow.active"
+                                @change="toggleActiveFlow(flow, $event.target.checked)"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                type="checkbox"
+                                :checked="flow.auto_sync"
+                                @change="toggleAutoSyncFlow(flow, $event.target.checked)"
+                            />
+                        </td>
                         <td>{{ formatDate(flow.chdate) }}</td>
                         <td>{{ formatDate(flow.mkdate) }}</td>
                         <td class="actions">
                             <StudipActionMenu
                                 :context="$gettext('Verteiltes Lernmaterial')"
                                 :items="
-                                    unitFlows.length > 1
-                                        ? [{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }]
-                                        : []
+                                    [
+                                        { id: 2, label: $gettext('Synchronisieren'), icon: 'refresh', emit: 'sync' },
+                                    ].concat(
+                                        unitFlows.length > 1
+                                            ? [{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }]
+                                            : []
+                                    )
                                 "
                                 @delete="showDeleteFlow(flow)"
+                                @sync="syncFlow(flow)"
                             />
                         </td>
                     </tr>
@@ -180,8 +201,7 @@ onMounted(() => {
                     ></StudipQuicksearch>
                 </label>
             </form>
-            <DeleteFlow :open="openDeleteDialog" @update:open="updateOpenDeleteDialog" @delete="deleteFlow"/>
-            
+            <DeleteFlow :open="openDeleteDialog" @update:open="updateOpenDeleteDialog" @delete="deleteFlow" />
         </template>
     </StudipDialog>
 </template>

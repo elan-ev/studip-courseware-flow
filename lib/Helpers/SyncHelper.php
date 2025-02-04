@@ -222,7 +222,7 @@ class SyncHelper
             if ($target_block_id) {
                 $deletable_blocks = array_diff($deletable_blocks, [$target_block_id]);
                 $target_block = Block::find($target_block_id);
-                self::syncBlock($flow, $target_block, $block, $files_map, $folders_map, $map_changed);
+                self::syncBlock($flow, $user, $target_block, $block, $files_map, $folders_map, $map_changed);
             } else {
                 $target_container = Container::find($flow->container_map[$block->container_id]);
 
@@ -276,7 +276,7 @@ class SyncHelper
         $target_container->store();
     }
 
-    private static function syncBlock(Flow &$flow, Block $target_block, Block $source_block, &$files_map, &$folders_map, &$map_changed): void
+    private static function syncBlock(Flow &$flow, $user, Block $target_block, Block $source_block, &$files_map, &$folders_map, &$map_changed): void
     {
         if (!$target_block ||!$source_block) {
             return;
@@ -288,8 +288,8 @@ class SyncHelper
         $target_payload = $source_payload;
 
         // update file and folder ids with maps
-        $target_payload = self::updateFileIds($flow, $target_block, $source_block, $files_map);
-        $target_payload = self::updateFolderIds($flow, $target_payload, $source_block, $folders_map);
+        $target_payload = self::updateFileIds($flow, $user, $target_block, $source_block, $files_map);
+        $target_payload = self::updateFolderIds($flow, $user, $target_payload, $source_block, $folders_map);
 
         // special handling for link blocks
 
@@ -297,7 +297,7 @@ class SyncHelper
         $target_block->store();
     }
 
-    private static function updateFileIds(Flow &$flow, $target_block, $source_block, &$files_map, $user): Array
+    private static function updateFileIds(Flow &$flow, $user, $target_block, $source_block, &$files_map): Array
     {
         $source_payload = $source_block->type->getPayload();
         $target_payload = json_decode($target_block->payload, true);
@@ -313,7 +313,6 @@ class SyncHelper
                     $target_payload['file_id'] = $files_map[$source_block->id];
                 } else {
                     if ($source_payload['file_id'] !== '') {
-                        // copy file and update map
                         $copied_file_id = self::copyFileById($flow,$user, $source_payload['file_id']);
                         $target_payload['file_id'] = $copied_file_id;
                         addToMap($files_map, $source_payload['file_id'], $copied_file_id);
@@ -335,7 +334,7 @@ class SyncHelper
         return $target_payload;
     }
 
-    private static function updateFolderIds(Flow &$flow, $target_payload, $source_block, &$files_map): Array
+    private static function updateFolderIds(Flow &$flow, $user, $target_payload, $source_block, &$files_map): Array
     {
         $source_payload = $source_block->type->getPayload();
 
@@ -345,10 +344,11 @@ class SyncHelper
                 // is source folder id in map?
                 if (isset($files_map[$source_payload['folder_id']])) {
                     $target_payload['folder_id'] = $files_map[$source_block->id];
+                    //todo update target folder content
                 } else {
                     if ($source_payload['folder_id'] !== '') {
                         // copy folder and update map
-                        $target_payload['folder_id'] = self::copyFolder();
+                        $target_payload['folder_id'] = self::copyFolderById($flow, $user,  $source_payload['folder_id']);
                     } else {
                         $target_payload['folder_id'] = '';
                     }
@@ -395,7 +395,7 @@ class SyncHelper
         return '';
     }
 
-    private static function copyFolderById($flow, $user, string $source_folder_id, string $target_range_id): string
+    private static function copyFolderById($flow, $user, string $source_folder_id): string
     {
         return ''; // not implemented yet
     }

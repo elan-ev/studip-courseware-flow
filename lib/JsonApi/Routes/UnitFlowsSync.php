@@ -10,23 +10,25 @@ use CoursewareFlow\Helpers\SyncHelper;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class FlowSync extends JsonApiController
+class UnitFlowsSync extends JsonApiController
 {
     public function __invoke(Request $request, Response $response, $args)
     {
         
-        $resource = Flow::find($args['id']);
+        $user = $this->getUser($request);
+        $resource = \Courseware\Unit::find($args['id']);
+
         if (!$resource) {
             throw new RecordNotFoundException();
         }
         $user = $this->getUser($request);
-        if (!Authority::canUpdateFlow($user, $resource)) {
+        if (!Authority::canUpdateUnitFlows($user, $resource)) {
             throw new AuthorizationFailedException();
         }
 
-        $updated_resource = $this->syncFlow($resource, $user);
+        //todo: sync all unit flows
 
-        return $this->getContentResponse($updated_resource);
+        return $this->getContentResponse();
     }
 
     private function syncFlow(Flow $resource, $user) : Flow

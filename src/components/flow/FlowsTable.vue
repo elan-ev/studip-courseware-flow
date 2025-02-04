@@ -59,6 +59,10 @@ const distributeUnit = (unit) => {
     contextStore.setSelectedUnit(unit);
     emit('create-flow');
 };
+
+const syncUnitFlows = (unit) => {
+    flowsStore.syncUnitFlows(unit);
+}
 </script>
 
 <template>
@@ -98,11 +102,13 @@ const distributeUnit = (unit) => {
                         <StudipActionMenu
                             :context="$gettext('Verteiltes Lernmaterial')"
                             :items="[
-                                { id: 1, label: $gettext('Bearbeiten'), icon: 'edit', emit: 'edit' },
-                                { id: 2, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' },
+                                { id: 1, label: $gettext('Synchronisieren'), icon: 'refresh', emit: 'sync' },
+                                { id: 2, label: $gettext('Bearbeiten'), icon: 'edit', emit: 'edit' },
+                                { id: 3, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' },
                             ]"
                             @edit="editUnitFlows(unit)"
                             @delete="deleteUnitFlows(unit)"
+                            @sync="syncUnitFlows(unit)"
                         />
                     </td>
                 </tr>

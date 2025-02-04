@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { useGettext } from 'vue3-gettext';
 import StudipIcon from '@/components/studip/StudipIcon.vue';
 
-const ACTIONMENU_THRESHOLD = 3;
+const ACTIONMENU_THRESHOLD = 2;
 
 const { $gettext } = useGettext();
 
