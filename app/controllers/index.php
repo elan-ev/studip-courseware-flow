@@ -18,6 +18,9 @@ class IndexController extends StudipController
             $this->isTeacher = $perm->have_studip_perm('tutor', Context::getId(), $user->id);
             $this->preferredLanguage = str_replace('_', '-', $_SESSION['_language']);
             $this->courseSearch = new StandardSearch('Seminar_id', ['simple_name' => true]);
+
+            $sidebar = \Sidebar::Get();
+            $sidebar->addWidget(new VueWidget('courseware-flow-view-widget'));
         }
     }
 }

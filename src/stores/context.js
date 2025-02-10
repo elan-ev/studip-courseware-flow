@@ -1,6 +1,5 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { set } from 'lodash';
 
 export const useContextStore = defineStore('courseware-flow-context', () => {
     const isTeacher = ref(false);
@@ -9,6 +8,8 @@ export const useContextStore = defineStore('courseware-flow-context', () => {
 
     const selectedUnit = ref(null);
     const selectedFlow = ref(null);
+
+    const viewMode = ref('tiles');
 
     const isGerman = computed(() => preferredLanguage.value === 'de_DE');
 
@@ -33,6 +34,10 @@ export const useContextStore = defineStore('courseware-flow-context', () => {
     function setSelectedFlow(flow) {
         selectedFlow.value = flow;
     }
+
+    function setViewMode(mode) {
+        viewMode.value = mode;
+    }
     
 
     return {
@@ -42,13 +47,16 @@ export const useContextStore = defineStore('courseware-flow-context', () => {
         preferredLanguage,
         selectedUnit,
         selectedFlow,
+        viewMode,
 
         setTeacherStatus,
         setPreferredLanguage,
         setCourseSearch,
+        setViewMode,
 
         setSelectedUnit,
         setSelectedFlow,
+
     };
 });
 
