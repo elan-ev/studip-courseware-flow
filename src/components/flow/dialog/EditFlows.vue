@@ -226,7 +226,7 @@ onMounted(() => {
                     </tr>
                 </tbody>
             </table>
-            <form class="default cw-flow-dialog-edit">
+            <form class="default cw-flow-dialog-edit-form">
                 <label>
                     {{ $gettext('Veranstaltung hinzufügen') }}
                     <StudipQuicksearch
@@ -243,3 +243,11 @@ onMounted(() => {
         </template>
     </StudipDialog>
 </template>
+
+<style lang="scss">
+.cw-flow-dialog-edit-form {
+    .quicksearch_container {
+        display: flex;
+    }
+}
+</style>

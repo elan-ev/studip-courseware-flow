@@ -94,7 +94,7 @@ const syncUnitFlows = (unit) => {
                             height="40"
                         />
                         <div v-else class="cw-element-image-placeholder">
-                            <StudipIcon shape="courseware" :size="36" />
+                            <StudipIcon shape="courseware" :size="24" />
                         </div>
                     </td>
                     <td>{{ unit['structural-element'].data.title }}</td>
@@ -122,7 +122,7 @@ const syncUnitFlows = (unit) => {
                 }}
             </caption>
             <colgroup>
-                <col width="100" />
+                <col width="80" />
                 <col width="*" />
                 <col width="40" />
             </colgroup>
@@ -142,7 +142,7 @@ const syncUnitFlows = (unit) => {
                             height="40"
                         />
                         <div v-else class="cw-element-image-placeholder">
-                            <StudipIcon shape="courseware" :size="36" />
+                            <StudipIcon shape="courseware" :size="24" />
                         </div>
                     </td>
                     <td>{{ unit['structural-element'].data.title }}</td>
@@ -181,13 +181,13 @@ const syncUnitFlows = (unit) => {
 }
 
 .cw-element-image-placeholder {
-    width: 72px;
+    width: 60px;
     height: 40px;
     background-color: #f0f0f0;
     text-align: center;
 
     img {
-        margin: 2px 0;
+        margin: 8px 0;
     }
 }
 </style>

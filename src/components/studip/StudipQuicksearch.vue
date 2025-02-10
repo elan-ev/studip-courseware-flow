@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import { inArray } from 'jquery';
-
 export default {
     name: 'StudipQuicksearch',
     props: {
