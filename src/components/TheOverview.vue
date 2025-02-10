@@ -12,8 +12,11 @@ const flowsStore = useFlowsStore();
 const unitStore = useUnitsStore();
 
 const openCreateDialog = ref(false);
-const showCards = ref(false);
-const showTable = ref(true);
+
+const viewMode = computed(() => contextStore.viewMode);
+
+const showCards = computed(() => viewMode.value === 'cards');
+const showTable = computed(() => viewMode.value === 'list');
 
 const updateOpenCreateDialog = (state) => {
     openCreateDialog.value = state;

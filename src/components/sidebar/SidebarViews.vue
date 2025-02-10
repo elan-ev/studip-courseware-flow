@@ -17,7 +17,7 @@ const setView = (mode) => {
         <div class="sidebar-widget-header">{{ $gettext('Ansichten') }}</div>
         <div class="sidebar-widget-content">
             <ul class="widget-list widget-links sidebar-views" aria-label="Ansichten">
-                <li :class="{ active: viewMode === 'tiles' }"><a href="#" @click="setView('tiles')">{{ $gettext('Kachelansicht') }}</a></li>
+                <li :class="{ active: viewMode === 'cards' }"><a href="#" @click="setView('cards')">{{ $gettext('Kachelansicht') }}</a></li>
                 <li :class="{ active: viewMode === 'list' }"><a href="#" @click="setView('list')">{{ $gettext('Listenansicht') }}</a></li>
             </ul>
         </div>

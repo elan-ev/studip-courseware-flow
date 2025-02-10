@@ -1,55 +1,10 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { useFlows } from '@/composables/useFlows';
 import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipIcon from '@/components/studip/StudipIcon.vue';
 import DialogDeleteFlows from '@/components/flow/dialog/DeleteFlows.vue';
 import DialogEditFlows from '@/components/flow/dialog/EditFlows.vue';
-
-import { useContextStore } from '@/stores/context.js';
-import { useFlowsStore } from '@/stores/flows.js';
-import { useUnitsStore } from '@/stores/units.js';
-const contextStore = useContextStore();
-const flowsStore = useFlowsStore();
-const unitStore = useUnitsStore();
-
 const emit = defineEmits(['create-flow']);
-
-const openEditDialog = ref(false);
-const openDeleteDialog = ref(false);
-
-const flows = computed(() => flowsStore.all);
-const units = computed(() => unitStore.all);
-
-
-const distributedUnits = computed(() => 
-    units.value.filter((unit) => flows.value.some((flow) => flow.source_unit.data.id === unit.id))
-);
-
-const noneDistributedUnits = computed(() =>
-    units.value.filter((unit) => !flows.value.some((flow) => flow.source_unit.data.id === unit.id))
-);
-
-const updateOpenEditDialog = (state) => {
-    openEditDialog.value = state;
-    if (!state) {
-        contextStore.setSelectedUnit(null);
-    }
-};
-const editUnitFlows = (unit) => {
-    contextStore.setSelectedUnit(unit);
-    updateOpenEditDialog(true);
-};
-
-const updateOpenDeleteDialog = (state) => {
-    openDeleteDialog.value = state;
-    if (!state) {
-        contextStore.setSelectedUnit(null);
-    }
-};
-const deleteUnitFlows = (unit) => {
-    contextStore.setSelectedUnit(unit);
-    updateOpenDeleteDialog(true);
-};
 
 const distributeUnit = (unit) => {
     if (!unit) {
@@ -60,9 +15,14 @@ const distributeUnit = (unit) => {
     emit('create-flow');
 };
 
-const syncUnitFlows = (unit) => {
-    flowsStore.syncUnitFlows(unit);
-}
+const {
+    contextStore,
+    openEditDialog, openDeleteDialog,
+    distributedUnits, noneDistributedUnits,
+    updateOpenEditDialog, editUnitFlows,
+    updateOpenDeleteDialog, deleteUnitFlows,
+    syncUnitFlows
+} = useFlows();
 </script>
 
 <template>

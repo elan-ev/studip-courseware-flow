@@ -9,7 +9,7 @@ export const useContextStore = defineStore('courseware-flow-context', () => {
     const selectedUnit = ref(null);
     const selectedFlow = ref(null);
 
-    const viewMode = ref('tiles');
+    const viewMode = ref('cards');
 
     const isGerman = computed(() => preferredLanguage.value === 'de_DE');
 
