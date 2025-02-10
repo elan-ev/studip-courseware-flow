@@ -296,7 +296,7 @@ class SyncHelper
 
         // update file and folder ids with maps
         $target_payload = self::updateFileIds($flow, $user, $target_block, $source_block, $files_map);
-        // $target_payload = self::updateFolderIds($flow, $user, $target_payload, $source_block, $folders_map);
+        $target_payload = self::updateFolderIds($flow, $user, $target_payload, $source_block, $folders_map);
 
 
         // special handling for link blocks
@@ -349,20 +349,16 @@ class SyncHelper
         switch ($source_block->block_type) {
             case 'folder':
             case 'gallery':
-                // is source folder id in map?
                 if (isset($files_map[$source_payload['folder_id']])) {
                     $target_payload['folder_id'] = $files_map[$source_block->id];
-                    //todo update target folder content
+                    self::syncTargetFolder($user, $target_payload['folder_id'], $source_payload['folder_id']);
                 } else {
                     if ($source_payload['folder_id'] !== '') {
-                        // copy folder and update map
                         $target_payload['folder_id'] = self::copyFolderById($flow, $user,  $source_payload['folder_id']);
                     } else {
                         $target_payload['folder_id'] = '';
                     }
-                    // if source has a folder id
-                    // copy folder and update map
-                    // else set target_payload to empty
+
                 }
                 break;
         }
@@ -405,7 +401,36 @@ class SyncHelper
 
     private static function copyFolderById($flow, $user, string $source_folder_id): string
     {
-        return ''; // not implemented yet
+        $source_folder = \Folder::find($source_folder_id);
+
+        if (!$source_folder) {
+            return '';
+        }
+
+        if (!$flow->target_folder) {
+            $flow->createTargetFolder($user);
+        }
+
+        $copiedFolder = \FileManager::copyFolder(
+            $source_folder,
+            $flow->target_folder->getTypedFolder(),
+            $user
+        );
+
+        if (is_object($copiedFolder)) {
+            return $copiedFolder->id;
+        }
+
+        return '';
+    }
+
+    private static function syncTargetFolder($user, string $target_folder_id, string $source_folder_id): void
+    {
+        // get all file-refs in source folder an compare their file-ids with the target folder file-refs and their file-ids
+        
+        // if a file-id is not in the target folder, copy the file to the target folder
+
+        // if a file-id is in the target folder but not in the source folder, delete the file from the target folder
     }
 
 }
