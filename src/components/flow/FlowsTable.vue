@@ -1,4 +1,5 @@
 <script setup>
+import { useColors } from '@/composables/useColors';
 import { useFlows } from '@/composables/useFlows';
 import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipIcon from '@/components/studip/StudipIcon.vue';
@@ -14,6 +15,7 @@ const distributeUnit = (unit) => {
     contextStore.setSelectedUnit(unit);
     emit('create-flow');
 };
+const { getHexByColorName } = useColors();
 
 const {
     contextStore,
@@ -34,6 +36,7 @@ const {
                 }}
             </caption>
             <colgroup>
+                <col width="10" />
                 <col width="100" />
                 <col width="*" />
                 <col width="40" />
@@ -41,12 +44,14 @@ const {
             <thead>
                 <tr>
                     <th></th>
+                    <th></th>
                     <th>{{ $gettext('Name') }}</th>
                     <th class="actions">{{ $gettext('Aktionen') }}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="unit in distributedUnits" :key="unit.id">
+                    <td :style="{ backgroundColor: getHexByColorName(unit['structural-element'].data.payload.color)}"></td>
                     <td>
                         <img
                             v-if="unit['structural-element'].data.image.meta"
@@ -82,12 +87,14 @@ const {
                 }}
             </caption>
             <colgroup>
-                <col width="80" />
+                <col width="10" />
+                <col width="100" />
                 <col width="*" />
                 <col width="40" />
             </colgroup>
             <thead>
                 <tr>
+                    <th></th>
                     <th></th>
                     <th>{{ $gettext('Name') }}</th>
                     <th class="actions">{{ $gettext('Aktionen') }}</th>
@@ -95,6 +102,7 @@ const {
             </thead>
             <tbody>
                 <tr v-for="unit in noneDistributedUnits" :key="unit.id">
+                    <td :style="{ backgroundColor: getHexByColorName(unit['structural-element'].data.payload.color)}"></td>
                     <td>
                         <img
                             v-if="unit['structural-element'].data.image.meta"

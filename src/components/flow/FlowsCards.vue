@@ -1,4 +1,5 @@
 <script setup>
+import { useColors } from '@/composables/useColors';
 import { useFlows } from '@/composables/useFlows';
 import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipIcon from '@/components/studip/StudipIcon.vue';
@@ -15,13 +16,19 @@ const distributeUnit = (unit) => {
     emit('create-flow');
 };
 
+const { getHexByColorName } = useColors();
+
 const {
     contextStore,
-    openEditDialog, openDeleteDialog,
-    distributedUnits, noneDistributedUnits,
-    updateOpenEditDialog, editUnitFlows,
-    updateOpenDeleteDialog, deleteUnitFlows,
-    syncUnitFlows
+    openEditDialog,
+    openDeleteDialog,
+    distributedUnits,
+    noneDistributedUnits,
+    updateOpenEditDialog,
+    editUnitFlows,
+    updateOpenDeleteDialog,
+    deleteUnitFlows,
+    syncUnitFlows,
 } = useFlows();
 </script>
 
@@ -36,11 +43,21 @@ const {
                         :src="unit['structural-element'].data.image.meta['download-url']"
                         alt=""
                     />
-                    <div v-else class="cw-placeholder">
-                        <StudipIcon shape="courseware" :size="120" />
+                    <div
+                        v-else
+                        class="cw-placeholder"
+                        :style="{ backgroundColor: getHexByColorName(unit['structural-element'].data.payload.color) }"
+                    >
+                        <StudipIcon shape="courseware" role="info_alt" :size="120" />
                     </div>
                 </div>
-                <div class="info-section">
+                <div
+                    class="info-section"
+                    :style="{
+                        borderTopColor: getHexByColorName(unit['structural-element'].data.payload.color),
+                        borderBottomColor: getHexByColorName(unit['structural-element'].data.payload.color),
+                    }"
+                >
                     <div class="header">
                         <h3>{{ unit['structural-element'].data.title }}</h3>
                         <StudipActionMenu
@@ -68,11 +85,21 @@ const {
                         :src="unit['structural-element'].data.image.meta['download-url']"
                         alt=""
                     />
-                    <div v-else class="cw-placeholder">
-                        <StudipIcon shape="courseware" :size="120" />
+                    <div
+                        v-else
+                        class="cw-placeholder"
+                        :style="{ backgroundColor: getHexByColorName(unit['structural-element'].data.payload.color) }"
+                    >
+                        <StudipIcon shape="courseware" role="info_alt" :size="120" />
                     </div>
                 </div>
-                <div class="info-section">
+                <div
+                    class="info-section"
+                    :style="{
+                        borderTopColor: getHexByColorName(unit['structural-element'].data.payload.color),
+                        borderBottomColor: getHexByColorName(unit['structural-element'].data.payload.color),
+                    }"
+                >
                     <div class="header">
                         <h3>{{ unit['structural-element'].data.title }}</h3>
                         <StudipActionMenu
@@ -94,7 +121,11 @@ const {
 .flows-grid {
     display: flex;
     flex-direction: column;
-    
+
+    h2:first-of-type {
+        margin-top: 0;
+    }
+
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(270px, 0));
@@ -118,7 +149,6 @@ const {
                     justify-content: center;
                     align-items: center;
                     height: 180px;
-                    background-color: #f5f5f5;
                     img {
                         height: 120px;
                         object-fit: contain;
@@ -128,9 +158,10 @@ const {
 
             .info-section {
                 height: calc(100% - 180px);
-                padding: 1rem;
-                border: 1px solid #f5f5f5;
-                border-top: none;
+                padding: 1em;
+                border: solid thin #d8d8d8;
+                border-top-width: 4px;
+                border-bottom-width: 4px;
 
                 .header {
                     display: flex;
