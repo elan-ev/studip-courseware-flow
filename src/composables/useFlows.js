@@ -3,7 +3,7 @@ import { useContextStore } from '@/stores/context.js';
 import { useFlowsStore } from '@/stores/flows.js';
 import { useUnitsStore } from '@/stores/units.js';
 
-export function useFlows() {
+export function useFlows(emit) {
     const contextStore = useContextStore();
     const flowsStore = useFlowsStore();
     const unitStore = useUnitsStore();
@@ -50,8 +50,17 @@ export function useFlows() {
         flowsStore.syncUnitFlows(unit);
     };
 
+    const distributeUnit = (unit) => {
+        if (!unit) {
+            console.error('Kein gültiges Unit-Objekt übergeben');
+            return;
+        }
+        contextStore.setSelectedUnit(unit);
+        emit('create-flow');
+    };
+    
+
     return {
-        contextStore,
         openEditDialog,
         openDeleteDialog,
         flows,
@@ -62,5 +71,6 @@ export function useFlows() {
         updateOpenDeleteDialog,
         deleteUnitFlows,
         syncUnitFlows,
+        distributeUnit
     };
 }

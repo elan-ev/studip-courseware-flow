@@ -7,24 +7,15 @@ import DialogDeleteFlows from '@/components/flow/dialog/DeleteFlows.vue';
 import DialogEditFlows from '@/components/flow/dialog/EditFlows.vue';
 const emit = defineEmits(['create-flow']);
 
-const distributeUnit = (unit) => {
-    if (!unit) {
-        console.error('Kein gültiges Unit-Objekt übergeben');
-        return;
-    }
-    contextStore.setSelectedUnit(unit);
-    emit('create-flow');
-};
 const { getHexByColorName } = useColors();
 
 const {
-    contextStore,
     openEditDialog, openDeleteDialog,
     distributedUnits, noneDistributedUnits,
     updateOpenEditDialog, editUnitFlows,
     updateOpenDeleteDialog, deleteUnitFlows,
-    syncUnitFlows
-} = useFlows();
+    syncUnitFlows, distributeUnit
+} = useFlows(emit);
 </script>
 
 <template>
