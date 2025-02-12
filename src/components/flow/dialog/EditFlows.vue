@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipDialog from '@/components/studip/StudipDialog.vue';
+import StudipIcon from '@/components/studip/StudipIcon.vue';
 import StudipQuicksearch from '@/components/studip/StudipQuicksearch.vue';
 import DeleteFlow from '@/components/flow/dialog/DeleteFlow.vue';
 

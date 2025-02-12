@@ -76,6 +76,11 @@ const {
                         />
                     </td>
                 </tr>
+                <tr v-if="distributedUnits.length === 0">
+                    <td colspan="5">
+                        {{ $gettext('Keine verteilten Lernmaterialien') }}
+                    </td>
+                </tr>
             </tbody>
         </table>
 
@@ -119,6 +124,11 @@ const {
                             :items="[{ id: 1, label: $gettext('Verteilen'), icon: 'add', emit: 'distribute' }]"
                             @distribute="distributeUnit(unit)"
                         />
+                    </td>
+                </tr>
+                <tr v-if="noneDistributedUnits.length === 0">
+                    <td colspan="4">
+                        {{ $gettext('Keine nicht verteilten Lernmaterialien') }}
                     </td>
                 </tr>
             </tbody>

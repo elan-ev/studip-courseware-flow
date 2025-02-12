@@ -27,7 +27,7 @@ const {
 <template>
     <div class="flows-grid">
         <h2>{{ $gettext('Verteilte Lernmaterialien') }}</h2>
-        <div class="grid">
+        <div class="grid" v-if="distributedUnits.length > 0">
             <div v-for="unit in distributedUnits" :key="unit.id" class="flow-card">
                 <div class="image-section">
                     <img
@@ -67,9 +67,10 @@ const {
                 </div>
             </div>
         </div>
+        <p v-else>{{ $gettext('Keine verteilten Lernmaterialien') }}</p>
 
         <h2>{{ $gettext('Nicht verteilte Lernmaterialien') }}</h2>
-        <div class="grid">
+        <div class="grid" v-if="noneDistributedUnits.length > 0">
             <div v-for="unit in noneDistributedUnits" :key="unit.id" class="flow-card">
                 <div class="image-section">
                     <img
@@ -103,6 +104,7 @@ const {
                 </div>
             </div>
         </div>
+        <p v-else>{{ $gettext('Keine nicht verteilten Lernmaterialien') }}</p>
 
         <DialogDeleteFlows :open="openDeleteDialog" @update:open="updateOpenDeleteDialog" />
         <DialogEditFlows :open="openEditDialog" @update:open="updateOpenEditDialog" />
@@ -113,6 +115,7 @@ const {
 .flows-grid {
     display: flex;
     flex-direction: column;
+    max-width: 1200px;
 
     h2:first-of-type {
         margin-top: 0;
@@ -121,8 +124,8 @@ const {
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(270px, 0));
+        grid-template-rows: repeat(auto-fill, 310px);
         gap: 10px;
-        margin-bottom: 3em;
 
         .flow-card {
             max-width: 270px;
