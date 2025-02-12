@@ -134,7 +134,7 @@ onMounted(() => {
 <template>
     <StudipDialog
         :height="768"
-        :width="1024"
+        :width="1200"
         :title="$gettext('Verteilung bearbeiten')"
         :close-text="$gettext('Schließen')"
         :open="open"
@@ -158,13 +158,13 @@ onMounted(() => {
             </div>
             <table class="default">
                 <colgroup>
-                    <col :width="250" />
-                    <col :width="100" />
-                    <col :width="100" />
-                    <col :width="100" />
-                    <col :width="150" />
-                    <col :width="150" />
-                    <col :width="50" />
+                    <col width="*" />
+                    <col width="250" />
+                    <col width="100" />
+                    <col width="100" />
+                    <col width="150" />
+                    <col width="150" />
+                    <col width="50" />
                 </colgroup>
                 <thead>
                     <tr>
@@ -182,7 +182,9 @@ onMounted(() => {
                         <td>{{ flow.target_course.attributes?.title || '---' }}</td>
                         <td>
                             {{
-                                flow.active
+                                !flow.target_unit || Object.keys(flow.target_unit).length === 0
+                                    ? $gettext('⚠️ Ziel-Lernmaterial nicht gefunden')
+                                    : flow.active
                                     ? $gettext(
                                           flow.status === 'idle'
                                               ? 'bereit'
@@ -197,6 +199,7 @@ onMounted(() => {
                                     : $gettext('deaktiviert')
                             }}
                         </td>
+
                         <td>
                             <input
                                 type="checkbox"
@@ -268,17 +271,17 @@ onMounted(() => {
 }
 
 .cw-flow-edit-unit-data {
-        display: flex;
-        flex-direction: row;
-        gap: 10px;
-        height: 40px;
-        margin-bottom: 16px;
-        overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    height: 40px;
+    margin-bottom: 16px;
+    overflow: hidden;
 
-        .cw-flow-edit-unit-title {
-            flex-grow: 1;
-            line-height: 40px;
-            font-size: 16px;
-        }
+    .cw-flow-edit-unit-title {
+        flex-grow: 1;
+        line-height: 40px;
+        font-size: 16px;
     }
+}
 </style>

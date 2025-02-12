@@ -14,17 +14,12 @@ export function useFlows(emit) {
     const flows = computed(() => flowsStore.all);
     const units = computed(() => unitStore.all);
 
-    // const distributedUnits = computed(() =>
-    //     units.value.filter((unit) => flows.value.some((flow) => flow.source_unit.data.id === unit.id))
-    // );
-
     const distributedUnits = computed(() =>
         units.value
             .filter((unit) => flows.value.some((flow) => flow.source_unit.data.id === unit.id))
             .map((unit) => {
                 const relatedFlows = flows.value.filter((flow) => flow.source_unit.data.id === unit.id);
     
-                // Frühestes Datum als String finden
                 const syncDate = relatedFlows.length
                     ? relatedFlows.reduce((earliest, flow) =>
                         earliest && earliest < flow.sync_date ? earliest : flow.sync_date
