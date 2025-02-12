@@ -40,7 +40,7 @@ const {
                         class="cw-placeholder"
                         :style="{ backgroundColor: getHexByColorName(unit['structural-element'].data.payload.color) }"
                     >
-                        <StudipIcon shape="courseware" role="info_alt" :size="120" />
+                        <StudipIcon shape="courseware" role="info_alt" :size="110" />
                     </div>
                 </div>
                 <div
@@ -82,7 +82,7 @@ const {
                         class="cw-placeholder"
                         :style="{ backgroundColor: getHexByColorName(unit['structural-element'].data.payload.color) }"
                     >
-                        <StudipIcon shape="courseware" role="info_alt" :size="120" />
+                        <StudipIcon shape="courseware" role="info_alt" :size="110" />
                     </div>
                 </div>
                 <div
@@ -142,7 +142,7 @@ const {
                     align-items: center;
                     height: 180px;
                     img {
-                        height: 120px;
+                        height: 110px;
                         object-fit: contain;
                     }
                 }

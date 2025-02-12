@@ -20,6 +20,7 @@ final class InitCoursewareFlow extends Migration
             `status`                        ENUM('idle', 'copying', 'syncing' 'failed') NOT NULL DEFAULT 'idle',
             `active`                        TINYINT(1) NOT NULL DEFAULT '1',
             `auto_sync`                     TINYINT(1) NOT NULL DEFAULT '0',
+            `sync_date`                     INT(11) UNSIGNED NOT NULL,
             `mkdate`                        INT(11) UNSIGNED NOT NULL,
             `chdate`                        INT(11) UNSIGNED NOT NULL,
 

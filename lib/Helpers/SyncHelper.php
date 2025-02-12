@@ -24,6 +24,7 @@ class SyncHelper
 
         self::syncUnit($flow, $user);
 
+        $flow->sync_date = time();
         $flow->status = Flow::STATUS_IDLE;
         $flow->store();
         

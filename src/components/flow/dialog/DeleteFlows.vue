@@ -29,12 +29,12 @@ const deleteUnitFlows = () => {
     <StudipDialog
         class="cw-flow-dialog-delete"
         :height="280"
-        :title="$gettext('Verteilungen löschen')"
-        confirm-class="trash"
+        :title="$gettext('Verteilungen aufheben')"
+        confirm-class="accept"
         :close-text="$gettext('Abbrechen')"
-        :confirm-text="$gettext('Löschen')"
+        :confirm-text="$gettext('Bestätigen')"
         :open="open"
-        :question="$gettext('Möchten Sie die Verteilungen für dieses Lernmaterial unwiderruflich löschen?')"
+        :question="$gettext('Möchten Sie die Verteilungen für dieses Lernmaterial unwiderruflich aufheben?')"
         @update:open="updateOpen"
         @confirm="deleteUnitFlows"
         >
@@ -42,7 +42,7 @@ const deleteUnitFlows = () => {
             <p class="cw-flow-dialog-option">
                 <label>
                     <input type="checkbox" v-model="withUnits" />
-                    {{ $gettext('Löschen inklusive Lernmaterial in den Zielveranstaltungen') }}
+                    {{ $gettext('Löschen des Lernmaterials in den Zielveranstaltungen') }}
                 </label>
             </p>
         </template>

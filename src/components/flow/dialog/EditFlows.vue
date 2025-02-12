@@ -140,6 +140,21 @@ onMounted(() => {
         @update:open="updateOpen"
     >
         <template #dialogContent>
+            <div class="cw-flow-edit-unit-data">
+                <div class="cw-flow-edit-unit-image">
+                    <img
+                        v-if="currentUnit['structural-element'].data.image.meta"
+                        :src="currentUnit['structural-element'].data.image.meta['download-url']"
+                        height="40"
+                    />
+                    <div v-else class="cw-element-image-placeholder">
+                        <StudipIcon shape="courseware" :size="24" />
+                    </div>
+                </div>
+                <div class="cw-flow-edit-unit-title">
+                    {{ currentUnit['structural-element'].data.title }}
+                </div>
+            </div>
             <table class="default">
                 <colgroup>
                     <col :width="250" />
@@ -156,7 +171,7 @@ onMounted(() => {
                         <th>{{ $gettext('Status') }}</th>
                         <th>{{ $gettext('Aktiviert') }}</th>
                         <th>{{ $gettext('automatisches Synchronisieren') }}</th>
-                        <th>{{ $gettext('letzte Aktualisierung') }}</th>
+                        <th>{{ $gettext('letzte Synchronisation') }}</th>
                         <th>{{ $gettext('erstellt am') }}</th>
                         <th class="actions">{{ $gettext('Aktion') }}</th>
                     </tr>
@@ -196,7 +211,7 @@ onMounted(() => {
                                 @change="toggleAutoSyncFlow(flow, $event.target.checked)"
                             />
                         </td>
-                        <td>{{ formatDate(flow.chdate) }}</td>
+                        <td>{{ formatDate(flow.sync_date) }}</td>
                         <td>{{ formatDate(flow.mkdate) }}</td>
                         <td class="actions">
                             <StudipActionMenu
@@ -250,4 +265,19 @@ onMounted(() => {
         display: flex;
     }
 }
+
+.cw-flow-edit-unit-data {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        height: 40px;
+        margin-bottom: 16px;
+        overflow: hidden;
+
+        .cw-flow-edit-unit-title {
+            flex-grow: 1;
+            line-height: 40px;
+            font-size: 16px;
+        }
+    }
 </style>

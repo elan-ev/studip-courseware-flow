@@ -40,6 +40,10 @@ class UnitFlowsDelete extends JsonApiController
                 if ($target_unit) {
                     $target_unit->delete();
                 }
+                $target_folder = \Folder::find($flow->target_folder_id);
+                if ($target_folder) {
+                    $target_folder->delete();
+                }
             } else {
                 $target_element = \Courseware\Unit::find($flow->target_unit_id)->structural_element;
                 if ($target_element) {

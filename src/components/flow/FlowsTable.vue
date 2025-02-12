@@ -5,6 +5,9 @@ import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipIcon from '@/components/studip/StudipIcon.vue';
 import DialogDeleteFlows from '@/components/flow/dialog/DeleteFlows.vue';
 import DialogEditFlows from '@/components/flow/dialog/EditFlows.vue';
+import { useDateFormatter } from '@/composables/useDateFormatter';
+const { formatDate } = useDateFormatter();
+
 const emit = defineEmits(['create-flow']);
 
 const { getHexByColorName } = useColors();
@@ -30,6 +33,7 @@ const {
                 <col width="10" />
                 <col width="100" />
                 <col width="*" />
+                <col width="200" />
                 <col width="40" />
             </colgroup>
             <thead>
@@ -37,6 +41,7 @@ const {
                     <th></th>
                     <th></th>
                     <th>{{ $gettext('Name') }}</th>
+                    <th>{{ $gettext('letzte Synchronisation') }}</th>
                     <th class="actions">{{ $gettext('Aktionen') }}</th>
                 </tr>
             </thead>
@@ -54,6 +59,9 @@ const {
                         </div>
                     </td>
                     <td>{{ unit['structural-element'].data.title }}</td>
+                    <td>
+                        {{ unit.syncDate ? formatDate(unit.syncDate) : '---' }}
+                    </td>
                     <td class="actions">
                         <StudipActionMenu
                             :context="$gettext('Verteiltes Lernmaterial')"
@@ -126,6 +134,7 @@ const {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    max-width: 1200px;
 
     table.default {
         width: 100%;
