@@ -65,7 +65,7 @@ class FlowsCreate extends JsonApiController
                 'target_unit_id' => null,
                 'status' => 'running',
                 'active' => true,
-                'auto_sync' => false,
+                'auto_sync' => true,
             ]);
             $flows[] = $flow;
         }
