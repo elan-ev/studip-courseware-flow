@@ -351,15 +351,14 @@ class SyncHelper
             case 'folder':
             case 'gallery':
                 if (isset($folders_map[$source_payload['folder_id']])) {
-                    $target_payload['folder_id'] = $folders_map[$source_block->id];
-                    self::syncTargetFolder($user, $target_payload['folder_id'], $source_payload['folder_id']);
+                    $target_payload['folder_id'] = $folders_map[$source_payload['folder_id']];
+                    // self::syncTargetFolder($user, $target_payload['folder_id'], $source_payload['folder_id']); // TODO
                 } else {
                     if ($source_payload['folder_id'] !== '') {
                         $target_payload['folder_id'] = self::copyFolderById($flow, $user,  $source_payload['folder_id']);
                     } else {
                         $target_payload['folder_id'] = '';
                     }
-
                 }
                 break;
         }
@@ -413,7 +412,7 @@ class SyncHelper
         }
 
         $copiedFolder = \FileManager::copyFolder(
-            $source_folder,
+            $source_folder->getTypedFolder(),
             $flow->target_folder->getTypedFolder(),
             $user
         );

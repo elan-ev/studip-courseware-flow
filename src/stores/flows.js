@@ -160,18 +160,18 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
 
     function syncFlow(flow) {
         inProgress.value = true;
-        api.patch(`courseware-flows/${flow.id}/sync`);
+        api.post(`courseware-flows/${flow.id}/sync`);
         setTimeout(() => {
             fetchById(flow.id);
             inProgress.value = false;
         }, 1000);
     }
 
-    function syncUnitFlows(unitId) {
+    function syncUnitFlows(unit) {
         inProgress.value = true;
-        api.patch(`units/${unitId}/courseware-flows/sync`);
+        api.post(`units/${unit.id}/courseware-flows/sync`);
         setTimeout(() => {
-            fetchUnitFlows(unitId);
+            fetchUnitFlows(unit.id);
             inProgress.value = false;
         }, 1000);
     }

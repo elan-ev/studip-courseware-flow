@@ -26,9 +26,14 @@ class UnitFlowsSync extends JsonApiController
             throw new AuthorizationFailedException();
         }
 
-        //todo: sync all unit flows
+        $flows = Flow::findBySQL('active = 1 AND status = ? AND source_unit_id = ?', ['idle', $resource->id]);
 
-        return $this->getContentResponse();
+        foreach ($flows as $flow) {
+            $this->syncFlow($flow, $user);
+        }
+
+
+        return $this->getContentResponse($resource);
     }
 
     private function syncFlow(Flow $resource, $user) : Flow
