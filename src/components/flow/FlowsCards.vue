@@ -5,6 +5,8 @@ import StudipActionMenu from '@/components/studip/StudipActionMenu.vue';
 import StudipIcon from '@/components/studip/StudipIcon.vue';
 import DialogDeleteFlows from '@/components/flow/dialog/DeleteFlows.vue';
 import DialogEditFlows from '@/components/flow/dialog/EditFlows.vue';
+import { useDateFormatter } from '@/composables/useDateFormatter';
+const { formatDate } = useDateFormatter();
 
 const emit = defineEmits(['create-flow']);
 
@@ -63,6 +65,13 @@ const {
                             @delete="deleteUnitFlows(unit)"
                             @sync="syncUnitFlows(unit)"
                         />
+                    </div>
+                    <div class="meta">
+                        <p>
+                            <strong>{{ $gettext('letzte Synchronisation') }}:</strong>
+                            <br>
+                            {{ unit.syncDate ? formatDate(unit.syncDate) : '---' }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -164,6 +173,13 @@ const {
                     align-items: center;
 
                     h3 {
+                        margin: 0;
+                    }
+                }
+
+                .meta {
+                    margin-top: 1em;
+                    p {
                         margin: 0;
                     }
                 }

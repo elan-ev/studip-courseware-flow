@@ -232,11 +232,7 @@ onMounted(() => {
                                                   },
                                               ]
                                             : []),
-                                    ].concat(
-                                        unitFlows.length > 1
-                                            ? [{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }]
-                                            : []
-                                    )
+                                    ].concat([{ id: 1, label: $gettext('Löschen'), icon: 'trash', emit: 'delete' }])
                                 "
                                 @delete="showDeleteFlow(flow)"
                                 @sync="syncFlow(flow)"
