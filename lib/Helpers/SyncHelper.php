@@ -343,15 +343,15 @@ class SyncHelper
         return $target_payload;
     }
 
-    private static function updateFolderIds(Flow &$flow, $user, $target_payload, $source_block, &$files_map): Array
+    private static function updateFolderIds(Flow &$flow, $user, $target_payload, $source_block, &$folders_map): Array
     {
         $source_payload = $source_block->type->getPayload();
 
         switch ($source_block->block_type) {
             case 'folder':
             case 'gallery':
-                if (isset($files_map[$source_payload['folder_id']])) {
-                    $target_payload['folder_id'] = $files_map[$source_block->id];
+                if (isset($folders_map[$source_payload['folder_id']])) {
+                    $target_payload['folder_id'] = $folders_map[$source_block->id];
                     self::syncTargetFolder($user, $target_payload['folder_id'], $source_payload['folder_id']);
                 } else {
                     if ($source_payload['folder_id'] !== '') {
