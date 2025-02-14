@@ -290,6 +290,12 @@ class CopyHelper
                 self::addToMap($files_map, $source_payload['background_image_id'], $target_payload['background_image_id']);
                 break;
             case 'text':
+                $source_files = $source_block->getFiles();
+                $target_files = $target_block->getFiles();
+
+                foreach ($source_files as $index => $source_file) {
+                    self::addToMap($files_map, $source_file->id, $target_files[$index]->id);
+                }
                 break;
         }
     }
