@@ -13,6 +13,10 @@ class SyncHelper
 
     private static function addToMap(array &$map, string $key, string $value): void
     {
+        if (empty($key)) {
+            return;
+        }
+
         if (!isset($map[$key])) {
             $map[$key] = $value;
         }

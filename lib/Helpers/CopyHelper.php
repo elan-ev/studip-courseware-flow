@@ -11,6 +11,10 @@ class CopyHelper
 {
     private static function addToMap(array &$map, string $key, string $value): void
     {
+        if (empty($key)) {
+            return;
+        }
+    
         if (!isset($map[$key])) {
             $map[$key] = $value;
         }
@@ -273,10 +277,17 @@ class CopyHelper
                 self::addToMap($files_map, $source_payload['file_id'], $target_payload['file_id']);
                 break;
             case 'before-after':
+                self::addToMap($files_map, $source_payload['before_file_id'], $target_payload['before_file_id']);
+                self::addToMap($files_map, $source_payload['after_file_id'], $target_payload['after_file_id']);
                 break;
             case 'dialog-cards':
+                foreach ($source_payload['cards'] as $index => $card) {
+                    self::addToMap($files_map, $card['front_file_id'], $target_payload['cards'][$index]['front_file_id']);
+                    self::addToMap($files_map, $card['back_file_id'], $target_payload['cards'][$index]['back_file_id']);
+                }
                 break;
             case 'headline':
+                self::addToMap($files_map, $source_payload['background_image_id'], $target_payload['background_image_id']);
                 break;
             case 'text':
                 break;
