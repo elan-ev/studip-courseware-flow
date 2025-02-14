@@ -31,6 +31,7 @@ class Flow extends \JsonApi\Schemas\SchemaProvider
             'source_unit_id' => (string) $resource['source_unit_id'],
             'target_course_id' => (string) $resource['target_course_id'],
             'target_unit_id' => (string) $resource['target_unit_id'],
+            'target_folder_id' => (string) $resource['target_folder_id'],
             'sync_date' => date('c', $resource['sync_date']),
             'mkdate' => date('c', $resource['mkdate']),
             'chdate' => date('c', $resource['chdate']),

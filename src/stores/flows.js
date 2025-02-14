@@ -121,11 +121,13 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
     async function deleteFlow(flow, withUnit = false) {
         if (!flow.id) return;
         const targetUnitId = flow.target_unit_id;
+        const targetFolderId = flow.target_folder_id;
         inProgress.value = true;
         api.delete('courseware-flows', flow.id).then(() => {
             records.value.delete(flow.id);
             if (withUnit && targetUnitId) {
                 try {
+                    api.delete('folders', targetFolderId);
                     api.delete('courseware-units', targetUnitId).then(() => {
                         inProgress.value = false;
                     });
