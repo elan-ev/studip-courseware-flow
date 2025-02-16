@@ -310,42 +310,57 @@ class SyncHelper
         $target_block->store();
     }
 
-    private static function updateFileIds(Flow &$flow, $user, $target_block, $source_block, &$files_map): Array
+    private static function updateFileIds(Flow &$flow, $user, $target_block, $source_block, &$files_map): array
     {
         $source_payload = $source_block->type->getPayload();
         $target_payload = json_decode($target_block->payload, true);
-
-        switch ($source_block->block_type) {
-            case 'audio':
-            case 'canvas':
-            case 'document':
-            case 'download':
-            case 'image-map':
-            case 'video':
-                if (isset($files_map[$source_payload['file_id']])) {
-                    $target_payload['file_id'] = $files_map[$source_payload['file_id']];
-                } else {
-                    if ($source_payload['file_id'] !== '') {
-                        $copied_file_id = self::copyFileById($flow,$user, $source_payload['file_id']);
-                        $target_payload['file_id'] = $copied_file_id;
-                        self::addToMap($files_map, $source_payload['file_id'], $copied_file_id);
-                    } else {
-                        $target_payload['file_id'] = '';
-                    }
-                }
-                break;
-            case 'before-after':
-                break;
-            case 'dialog-cards':
-                break;
-            case 'headline':
-                break;
-            case 'text':
-                break;
+    
+        $fileKeys = [
+            'audio' => ['file_id'],
+            'canvas' => ['file_id'],
+            'document' => ['file_id'],
+            'download' => ['file_id'],
+            'image-map' => ['file_id'],
+            'video' => ['file_id'],
+            'before-after' => ['before_file_id', 'after_file_id'],
+            'headline' => ['background_image_id'],
+        ];
+    
+        if (isset($fileKeys[$source_block->block_type])) {
+            foreach ($fileKeys[$source_block->block_type] as $key) {
+                $target_payload[$key] = self::copyOrMapFileId($flow, $user, $source_payload[$key] ?? '', $files_map);
+            }
         }
-
+        
+        if ($source_block->block_type === 'dialog-cards' && isset($source_payload['cards'])) {
+            foreach ($source_payload['cards'] as $index => $card) {
+                $target_payload['cards'][$index]['front_file_id'] = self::copyOrMapFileId($flow, $user, $card['front_file_id'] ?? '', $files_map);
+                $target_payload['cards'][$index]['back_file_id'] = self::copyOrMapFileId($flow, $user, $card['back_file_id'] ?? '', $files_map);
+            }
+        }
+        
+        if ($source_block->block_type === 'text') {
+            // TODO: Sonderfall Text wird separat behandelt
+        }
+        
         return $target_payload;
     }
+    
+    private static function copyOrMapFileId(Flow &$flow, $user, $source_file_id, &$files_map): string
+    {
+        if (isset($files_map[$source_file_id])) {
+            return $files_map[$source_file_id];
+        }
+        
+        if ($source_file_id !== '') {
+            $copied_file_id = self::copyFileById($flow, $user, $source_file_id);
+            self::addToMap($files_map, $source_file_id, $copied_file_id);
+            return $copied_file_id;
+        }
+        
+        return '';
+    }
+    
 
     private static function updateFolderIds(Flow &$flow, $user, $target_payload, $source_block, &$folders_map): Array
     {
