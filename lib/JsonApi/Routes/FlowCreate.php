@@ -9,6 +9,7 @@ use JsonApi\Errors\AuthorizationFailedException;
 use JsonApi\JsonApiController;
 
 use CoursewareFlow\Models\Flow;
+use CoursewareFlow\Helpers\CopyHelper;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -54,23 +55,36 @@ class FlowCreate extends JsonApiController
     {
         $source_course = $source_unit->course;
 
-        // $target_unit = $source_unit->copy($user, $target_course->id, 'course', false);
-        //TODO: create own copy function to get mapping information
-
         $flow = Flow::create([
             'source_course_id' => $source_course->id,
             'source_unit_id' => $source_unit->id,
             'target_course_id' => $target_course->id,
-            // 'target_unit_id' => $target_unit->id,
-            'target_unit_id' => 0,
-            // 'structural_elements_map' => $source_unit->structural_elements_map,
-            // 'container_map' => $source_unit->container_map,
-            // 'blocks_map' => $source_unit->blocks_map,
+            'target_unit_id' => null,
+            'status' => 'running',
             'active' => true,
             'auto_sync' => true,
         ]);
 
+        $this->createFlowTargetUnit($flow, $source_unit, $user);
+
         return $flow;
+    }
+
+    private function createFlowTargetUnit(Flow $flow, $source_unit, $user): void
+    {
+        $target = CopyHelper::copyUnit($user, $source_unit, $flow->target_course_id);
+
+        $flow->target_unit_id = $target['target_unit']->id;
+        $flow->status = 'idle';
+        $flow->structural_elements_map = json_encode($target['structural_elements_map']);
+        $flow->structural_elements_image_map = json_encode($target['structural_elements_image_map']);
+        $flow->container_map = json_encode($target['container_map']);
+        $flow->blocks_map = json_encode($target['blocks_map']);
+        $flow->files_map = json_encode($target['files_map']);
+        $flow->folders_map = json_encode($target['folders_map']);
+        $flow->target_folder_id = $target['target_folder_id'];
+        $flow->sync_date = time();
+        $flow->store();
     }
 
     private function getUnit($json): ?\Courseware\Unit
@@ -83,7 +97,8 @@ class FlowCreate extends JsonApiController
     private function getTargetCourse($json): ?\Course
     {
         $course_id = self::arrayGet($json, 'data.attributes.target_course_id');
+        $target_course = \Course::find($course_id);
 
-        return \Course::find($course_id);
+        return $target_course;
     }
 }
