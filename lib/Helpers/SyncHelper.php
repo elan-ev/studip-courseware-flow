@@ -371,7 +371,7 @@ class SyncHelper
             case 'gallery':
                 if (isset($folders_map[$source_payload['folder_id']])) {
                     $target_payload['folder_id'] = $folders_map[$source_payload['folder_id']];
-                    // self::syncTargetFolder($user, $target_payload['folder_id'], $source_payload['folder_id']); // TODO
+                    self::syncTargetFolder($user, $target_payload['folder_id'], $source_payload['folder_id']);
                 } else {
                     if ($source_payload['folder_id'] !== '') {
                         $target_payload['folder_id'] = self::copyFolderById($flow, $user,  $source_payload['folder_id']);
@@ -445,11 +445,32 @@ class SyncHelper
 
     private static function syncTargetFolder($user, string $target_folder_id, string $source_folder_id): void
     {
-        // get all file-refs in source folder an compare their file-ids with the target folder file-refs and their file-ids
-        
-        // if a file-id is not in the target folder, copy the file to the target folder
+        $source_folder = \Folder::find($source_folder_id)->getTypedFolder();
+        $target_folder = \Folder::find($target_folder_id)->getTypedFolder();
+        if (!$source_folder || !$target_folder) {
+            return;
+        }
+        $source_files = $source_folder->getFiles();
+        $target_files = $target_folder->getFiles();
 
-        // if a file-id is in the target folder but not in the source folder, delete the file from the target folder
+        $source_file_map = [];
+        foreach ($source_files as $file) {
+            $source_file_map[$file->file_id] = $file;
+        }
+
+        $target_file_ids = array_map(fn($file) => $file->file_id, $target_files);
+
+        $missing_file_ids = array_diff(array_keys($source_file_map), $target_file_ids);
+
+        foreach ($missing_file_ids as $file_id) {
+            $file = $source_file_map[$file_id];
+            $copied_file = \FileManager::copyFile($file, $target_folder, $user);
+        }
+
+        $extra_files = array_filter($target_files, fn($file) => !isset($source_file_map[$file->file_id]));
+        foreach ($extra_files as $file) {
+            $file->delete();
+        }
     }
 
 }
