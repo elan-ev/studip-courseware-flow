@@ -90,6 +90,7 @@ class FlowsCreate extends JsonApiController
         $flow->files_map = json_encode($target['files_map']);
         $flow->folders_map = json_encode($target['folders_map']);
         $flow->target_folder_id = $target['target_folder_id'];
+        $flow->vips_map = json_encode($target['vips_map']);
         $flow->sync_date = time();
         $flow->store();
     }

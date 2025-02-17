@@ -12,7 +12,6 @@ class CoursewareFlow extends StudIPPlugin implements StandardPlugin, SystemPlugi
     public function __construct()
     {
         parent::__construct();
-        // SimpleORMap::expireTableScheme();
         PageLayout::addScript($this->getPluginUrl() . '/dist/courseware-flow.js', [
             'type' => 'module',
             'rel'  => 'preload',
