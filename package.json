@@ -1,7 +1,7 @@
 {
     "name": "courseware-flow-lib",
     "private": true,
-    "version": "0.1.0",
+    "version": "0.9.1",
     "type": "module",
     "files": [
       "dist"
@@ -20,7 +20,7 @@
       "dev-build": "vite build --mode development",
       "preview": "vite preview",
       "prezip": "npm install && npm run build && composer install --no-dev",
-      "zip": "zip -r studip-courseware-flow-v$npm_package_version.zip app assets lib migrations dist vendor LICENSE README.md CoursewareFlow.php plugin.manifest -x '*.editorconfig' -x 'vendor/*.git*' -x '*.DS_Store'"
+      "zip": "zip -r studip-courseware-flow-v$npm_package_version.zip app assets lib migrations dist vendor LICENSE README.md CoursewareFlow.php bootstrap.php plugin.manifest -x '*.editorconfig' -x 'vendor/*.git*' -x '*.DS_Store'"
     },
     "dependencies": {
       "vue": "^3.4.31",
