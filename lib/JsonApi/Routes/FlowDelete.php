@@ -39,6 +39,13 @@ class FlowDelete extends JsonApiController
                 if ($target_folder) {
                     $target_folder->delete();
                 }
+                $vips_assignment_ids = array_values(json_decode($resource->vips_map, true));
+                foreach ($vips_assignment_ids as $vips_assignment_id) {
+                    $vips_assignment = \VipsAssignment::find($vips_assignment_id);
+                    if ($vips_assignment) {
+                        $vips_assignment->delete();
+                    }
+                }
         }
         $source_element = \Courseware\Unit::find($resource->source_unit_id)->structural_element;
         if ($source_element) {

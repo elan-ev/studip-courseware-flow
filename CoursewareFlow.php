@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/bootstrap.php';
+require_once __DIR__ . '/bootstrap.php';
 
 use JsonApi\Contracts\JsonApiPlugin;
 use CoursewareFlow\JsonApi\Routes;
@@ -14,10 +14,13 @@ class CoursewareFlow extends StudIPPlugin implements StandardPlugin, SystemPlugi
         parent::__construct();
         PageLayout::addScript($this->getPluginUrl() . '/dist/courseware-flow.js', [
             'type' => 'module',
-            'rel'  => 'preload',
+            'rel' => 'preload',
         ]);
 
         PageLayout::addStylesheet($this->getPluginUrl() . '/dist/courseware-flow.css');
+
+        $this->loadVipsPlugin();
+
     }
 
     public function perform($unconsumedPath)
@@ -25,11 +28,13 @@ class CoursewareFlow extends StudIPPlugin implements StandardPlugin, SystemPlugi
         // This require must be here, to prevent vendor version conflicts.
         require_once __DIR__ . '/vendor/autoload.php';
 
-        $trails_root  = $this->getPluginPath() . '/app';
+        $trails_root = $this->getPluginPath() . '/app';
 
-        $dispatcher         = new Trails_Dispatcher($trails_root,
+        $dispatcher = new Trails_Dispatcher(
+            $trails_root,
             rtrim(PluginEngine::getURL($this, [], ''), '/'),
-            'index');
+            'index'
+        );
 
         $dispatcher->current_plugin = $this;
         $dispatcher->dispatch($unconsumedPath);
@@ -49,7 +54,7 @@ class CoursewareFlow extends StudIPPlugin implements StandardPlugin, SystemPlugi
     {
         $tabs = array();
 
-        $nav = new Navigation($this->getPluginName(),PluginEngine::getURL($this, [], 'index'));
+        $nav = new Navigation($this->getPluginName(), PluginEngine::getURL($this, [], 'index'));
         $tabs['coursewareflow'] = $nav;
         $nav->addSubNavigation('index', new Navigation(
             'Übersicht',
@@ -61,6 +66,24 @@ class CoursewareFlow extends StudIPPlugin implements StandardPlugin, SystemPlugi
     public function getIconNavigation($courseId, $last_visit, $user_id)
     {
         return null;
+    }
+
+    private function loadVipsPlugin()
+    {
+        $plugin_vips = \PluginManager::getInstance()->getPlugin('VipsPlugin');
+
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/lib/vips_common.inc.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/Exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/sc_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/mc_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/mco_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/lt_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/tb_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/cloze_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/rh_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/seq_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/me_exercise.php';
+        require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/lti_exercise.php';
     }
 
 
