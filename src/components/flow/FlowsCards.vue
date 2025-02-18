@@ -29,7 +29,7 @@ const {
 <template>
     <div class="flows-grid">
         <h2>{{ $gettext('Verteilte Lernmaterialien') }}</h2>
-        <div class="grid" v-if="distributedUnits.length > 0">
+        <div class="flow-grid" v-if="distributedUnits.length > 0">
             <div v-for="unit in distributedUnits" :key="unit.id" class="flow-card">
                 <div class="image-section">
                     <img
@@ -79,7 +79,7 @@ const {
         <p v-else>{{ $gettext('Keine verteilten Lernmaterialien') }}</p>
 
         <h2>{{ $gettext('Nicht verteilte Lernmaterialien') }}</h2>
-        <div class="grid" v-if="noneDistributedUnits.length > 0">
+        <div class="flow-grid" v-if="noneDistributedUnits.length > 0">
             <div v-for="unit in noneDistributedUnits" :key="unit.id" class="flow-card">
                 <div class="image-section">
                     <img
@@ -130,7 +130,7 @@ const {
         margin-top: 0;
     }
 
-    .grid {
+    .flow-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(270px, 0));
         grid-template-rows: repeat(auto-fill, 310px);
