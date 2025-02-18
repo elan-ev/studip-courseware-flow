@@ -102,7 +102,7 @@ watch(
                         {{ $gettext('Veranstaltungen') }}
                         <ul v-for="course in courses" :key="course.id">
                             <li class="cw-flow-course-selected">
-                                <img class="cw-flow-course-avatar" :src="course.meta.avatar.small" alt="avatar" />
+                                <img v-if="course.meta?.avatar" class="cw-flow-course-avatar" :src="course.meta.avatar.small" alt="avatar" />
                                 <span class="cw-flow-course-title">{{ course.title }}</span>
                                 <button @click="removeCourse(course.id)">
                                     <StudipIcon shape="trash" :size="20" />
