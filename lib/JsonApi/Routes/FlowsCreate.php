@@ -62,7 +62,7 @@ class FlowsCreate extends JsonApiController
                 'source_course_id' => $source_course->id,
                 'source_unit_id' => $source_unit->id,
                 'target_course_id' => $target_course->id,
-                'target_unit_id' => null,
+                'target_unit_id' => '',
                 'status' => 'running',
                 'active' => true,
                 'auto_sync' => true,
