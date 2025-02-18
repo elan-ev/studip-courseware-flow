@@ -340,7 +340,13 @@ class SyncHelper
         }
         
         if ($source_block->block_type === 'text') {
-            // TODO: Sonderfall Text wird separat behandelt
+            $target_payload['text'] = preg_replace_callback(
+                '/<img src="\/file\/(\d+)\/download" alt="[^"]*">/',
+                function ($matches) use ($flow, $user, &$files_map) {
+                    return '<img src="/file/' . self::copyOrMapFileId($flow, $user, $matches[1], $files_map) . '/download" alt="">';
+                },
+                $source_payload['text']
+            );
         }
         
         return $target_payload;
