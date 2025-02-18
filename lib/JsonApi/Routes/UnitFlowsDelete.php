@@ -44,7 +44,8 @@ class UnitFlowsDelete extends JsonApiController
                 if ($target_folder) {
                     $target_folder->delete();
                 }
-                $vips_assignment_ids = array_values(json_decode($flow->vips_map, true));
+                $vips_assignment_ids = json_decode($flow->vips_map, true) ?? [];
+                $vips_assignment_ids = array_values($vips_assignment_ids);
                 foreach ($vips_assignment_ids as $vips_assignment_id) {
                     $vips_assignment = \VipsAssignment::find($vips_assignment_id);
                     if ($vips_assignment) {
