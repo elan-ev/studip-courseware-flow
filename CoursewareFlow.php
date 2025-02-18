@@ -72,6 +72,10 @@ class CoursewareFlow extends StudIPPlugin implements StandardPlugin, SystemPlugi
     {
         $plugin_vips = \PluginManager::getInstance()->getPlugin('VipsPlugin');
 
+        if ($plugin_vips === null) {
+            return;
+        }
+
         require_once 'public/' . $plugin_vips->getPluginPath() . '/lib/vips_common.inc.php';
         require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/Exercise.php';
         require_once 'public/' . $plugin_vips->getPluginPath() . '/exercises/sc_exercise.php';
