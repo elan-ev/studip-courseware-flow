@@ -145,6 +145,7 @@ const {
                 img {
                     width: 100%;
                     height: auto;
+                    max-height: 180px;
                     object-fit: cover;
                 }
 
