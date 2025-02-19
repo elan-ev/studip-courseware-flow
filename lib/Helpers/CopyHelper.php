@@ -9,9 +9,9 @@ use \Courseware\Unit;
 
 class CopyHelper
 {
-    private static function addToMap(array &$map, string $key, string $value): void
+    private static function addToMap(array &$map, ?string $key, ?string $value): void
     {
-        if (empty($key)) {
+        if ($key === null || trim($key) === '' || $value === null) {
             return;
         }
     
@@ -19,6 +19,7 @@ class CopyHelper
             $map[$key] = $value;
         }
     }
+    
     public static function copyUnit($user, $source_unit, $target_course_id): array
     {
         $target_data = self::copyUnitContent($user, $source_unit, $target_course_id);

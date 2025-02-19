@@ -10,13 +10,12 @@ use CoursewareFlow\Models\Flow;
 
 class SyncHelper
 {
-
-    private static function addToMap(array &$map, string $key, string $value): void
+    private static function addToMap(array &$map, ?string $key, ?string $value): void
     {
-        if (empty($key)) {
+        if ($key === null || trim($key) === '' || $value === null) {
             return;
         }
-
+    
         if (!isset($map[$key])) {
             $map[$key] = $value;
         }
