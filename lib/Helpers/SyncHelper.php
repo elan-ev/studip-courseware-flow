@@ -107,10 +107,10 @@ class SyncHelper
         $structural_elements_image_map = json_decode($flow->structural_elements_image_map, true);
         $has_changes = false;
 
-        $fields = ['commentable', 'position', 'purpose', 'title', 'release_date', 'withdraw_date']; // ??? release_date and withdraw_date ???
+        $fields = ['commentable', 'position', 'purpose', 'title', 'release_date', 'withdraw_date'];
 
         foreach ($fields as $field) {
-            if ($source_element->$field !== $target_element->$field) {
+            if (isset($source_element->$field) && isset($target_element->$field) && $source_element->$field !== $target_element->$field) {
                 $target_element->$field = $source_element->$field;
                 $has_changes = true;
             }
