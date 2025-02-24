@@ -75,7 +75,7 @@ class Flow extends SimpleORMap
     public function createTargetFolder($user): void
     {
         $rootFolder = \Folder::findTopFolder($this->target_course_id);
-        $targetFolderName = 'Courseware - ' . str_replace('🔄 ', '', $this->source_unit->title);
+        $targetFolderName = 'Courseware - ' . str_replace('🔄 ', '', $this->source_unit->structural_element->title);
 
         $targetFolder = \FileManager::createSubFolder(
             \FileManager::getTypedFolder($rootFolder->id),

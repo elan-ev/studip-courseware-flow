@@ -450,13 +450,13 @@ class SyncHelper
 
     private static function syncTargetFolder($user, string $target_folder_id, string $source_folder_id): void
     {
-        $source_folder = \Folder::find($source_folder_id)->getTypedFolder();
-        $target_folder = \Folder::find($target_folder_id)->getTypedFolder();
+        $source_folder = \Folder::find($source_folder_id);
+        $target_folder = \Folder::find($target_folder_id);
         if (!$source_folder || !$target_folder) {
             return;
         }
-        $source_files = $source_folder->getFiles();
-        $target_files = $target_folder->getFiles();
+        $source_files = $source_folder->getTypedFolder()->getFiles();
+        $target_files = $target_folder->getTypedFolder()->getFiles();
 
         $source_file_map = [];
         foreach ($source_files as $file) {
