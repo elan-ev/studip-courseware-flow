@@ -76,8 +76,11 @@ class CopyHelper
             'purpose' => $source_structural_element->purpose,
             'position' => $source_structural_element->position,
             'payload' => $source_structural_element->payload,
-            'commentable' => $source_structural_element->commentable
         ]);
+
+        if (isset($source_structural_element->commentable)) {
+            $target_structural_element->commentable = $source_structural_element->commentable;
+        }
 
         $target_structural_element->store();
 
