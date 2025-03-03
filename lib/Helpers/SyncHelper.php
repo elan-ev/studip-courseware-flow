@@ -347,7 +347,7 @@ class SyncHelper
         $pattern = '/file_id=([a-f0-9]+)&amp;file_name=([^"]+)/';
         
         // Alle Vorkommen von file_id und file_name finden
-        if (preg_match_all($pattern, $target_payload['text'], $matches, PREG_SET_ORDER)) {
+        if (preg_match_all($pattern, $source_payload['text'], $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $source_file_id = $match[1];
                 $original_file_name = $match[2];
