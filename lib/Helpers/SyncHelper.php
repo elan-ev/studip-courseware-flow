@@ -50,6 +50,7 @@ class SyncHelper
             }
             self::syncStructuralElementsQuantity($flow, $source_unit->structural_element, $user);
             self::syncStructuralElements($flow, $target_unit->structural_element , $source_unit->structural_element, $user);
+            self::cleanUpFiles($flow, $user);
         } else {
             $target = CopyHelper::copyUnit($user, $source_unit, $flow->target_course_id);
             $flow->target_unit_id = $target['target_unit']->id;
@@ -497,4 +498,28 @@ class SyncHelper
         }
     }
 
+    private static function cleanUpFiles($flow, $user)
+    {
+        $rootFolder = \Folder::findTopFolder($flow->target_course_id);
+        $destinationFolderName = 'Courseware Import '.date('d.m.Y', time());
+        $destinationFolder = \Folder::findOneBySQL(
+            'parent_id = ? AND name = ?',
+            [$rootFolder->id, $destinationFolderName]
+        );
+
+        if (!$destinationFolder) {
+            return;
+        }
+
+        if (!$flow->target_folder) {
+            $flow->createTargetFolder($user);
+        }
+
+        $files = $destinationFolder->getTypedFolder()->getFiles();
+        foreach ($files as $file) {
+            \FileManager::moveFile($file, $flow->target_folder->getTypedFolder(), $user);
+        }
+
+        $destinationFolder->delete();
+    }
 }

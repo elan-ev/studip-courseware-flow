@@ -41,6 +41,7 @@ class Flow extends SimpleORMap
         $config['serialized_fields']['blocks_map'] = \JSONArrayObject::class;
         $config['serialized_fields']['folders_map'] = \JSONArrayObject::class;
         $config['serialized_fields']['files_map'] = \JSONArrayObject::class;
+        $config['serialized_fields']['vips_map'] = \JSONArrayObject::class;
 
         $config['belongs_to']['source_course'] = [
             'class_name'  => \Course::class,
