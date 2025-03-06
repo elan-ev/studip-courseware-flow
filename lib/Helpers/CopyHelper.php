@@ -146,6 +146,7 @@ class CopyHelper
         }
         if ($parent_folder) {
             $parent_folder->__set('name',  'Courseware - ' . str_replace('🔄 ', '', $source_unit_structural_element->title));
+            $parent_folder->__set('folder_type', 'MaterialFolder');
             $parent_folder->store();
         }
 

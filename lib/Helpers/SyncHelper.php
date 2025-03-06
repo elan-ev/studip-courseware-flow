@@ -489,7 +489,7 @@ class SyncHelper
 
         foreach ($missing_file_ids as $file_id) {
             $file = $source_file_map[$file_id];
-            $copied_file = \FileManager::copyFile($file, $target_folder, $user);
+            $copied_file = \FileManager::copyFile($file, $target_folder->getTypedFolder(), $user);
         }
 
         $extra_files = array_filter($target_files, fn($file) => !isset($source_file_map[$file->file_id]));

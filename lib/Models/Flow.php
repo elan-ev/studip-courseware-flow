@@ -81,13 +81,11 @@ class Flow extends SimpleORMap
         $targetFolder = \FileManager::createSubFolder(
             \FileManager::getTypedFolder($rootFolder->id),
             $user,
-            'HiddenFolder',
+            'MaterialFolder',
             $targetFolderName,
             ''
         );
-        $targetFolder->__set('download_allowed', 1);
 
-        $targetFolder->store();
         $this->target_folder_id = $targetFolder->id;
         $this->store();
     }
