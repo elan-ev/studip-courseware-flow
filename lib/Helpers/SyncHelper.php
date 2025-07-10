@@ -298,7 +298,7 @@ class SyncHelper
         $target_payload = $source_payload;
 
         // update file and folder ids with maps
-        $target_payload = self::updateFileIds($flow, $user, $target_block, $source_block, $files_map);
+        $target_payload = self::updateFileIds($flow, $user, $target_payload, $source_block, $files_map);
         $target_payload = self::updateFolderIds($flow, $user, $target_payload, $source_block, $folders_map);
 
 
@@ -308,10 +308,9 @@ class SyncHelper
         $target_block->store();
     }
 
-    private static function updateFileIds(Flow &$flow, $user, $target_block, $source_block, &$files_map): array
+    private static function updateFileIds(Flow &$flow, $user, $target_payload, $source_block, &$files_map): array
     {
         $source_payload = $source_block->type->getPayload();
-        $target_payload = json_decode($target_block->payload, true);
     
         $fileKeys = [
             'audio' => ['file_id'],
