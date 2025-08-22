@@ -46,6 +46,13 @@ npm run preview     # Gebautes Plugin in einer lokalen Vorschau starten
 ```
 Pull Requests und Issues sind willkommen.
 
+## Über elan e.V.
+
+Der elan e.V. ist ein gemeinnütziger Verein, der sich auf die Entwicklung und Betreuung von Software für Hochschulen spezialisiert hat. 
+Das Team entwickelt und betreut unter anderem Stud.IP-Plugins und weitere für Hochschulen relevante Anwendungen. 
+Ziel ist es, Lehrenden und Lernenden die Arbeit mit digitalen Lern- und Verwaltungstools zu erleichtern und Prozesse an Hochschulen effizienter zu gestalten. 
+Weitere Informationen finden Sie auf [elan-ev.de](https://elan-ev.de).
+
 ## Lizenz
 
 CoursewareFlow ist lizenziert unter der GNU Affero General Public License v3.0 (AGPL-3.0).
