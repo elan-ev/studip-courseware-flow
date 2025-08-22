@@ -1,4 +1,17 @@
 <?php
+/**
+ * UnitFlowsSync
+ *
+ * JSON-API-Route zum Synchronisieren aller aktiven und "idle" Flows einer bestimmten Courseware-Unit.
+ * Prüft die Berechtigung des Benutzers, führt die Synchronisation durch und liefert die Unit zurück.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

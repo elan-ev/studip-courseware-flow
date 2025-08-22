@@ -1,4 +1,18 @@
 <?php
+/**
+ * UnitFlowsDelete
+ *
+ * JSON-API-Route zum Löschen aller Flows einer bestimmten Courseware-Unit. 
+ * Optional können dabei auch die Ziel-Units, zugehörige Ordner und VIPS-Zuweisungen gelöscht werden.
+ * Prüft Berechtigungen des Benutzers und validiert die eingehenden JSON-Daten.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

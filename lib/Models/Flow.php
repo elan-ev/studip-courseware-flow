@@ -5,26 +5,43 @@ namespace CoursewareFlow\Models;
 use SimpleORMap;
 
 /**
- * CoursewareFlow Flow
+ * Flow
  *
- * @author  Ron Lucke <lucke@elan-ev.de>
- * @license GPL2 or any later version
+ * Repräsentiert einen CoursewareFlow-Eintrag, inklusive Quell- und Zielkurs,
+ * Quell- und Zielunit, zugehöriger Blöcke, Container, Dateien und Ordner.
  *
- * @property int $id database column
- * @property string $source_course_id database column
- * @property string $source_unit_id database column
- * @property string $target_course_id database column
- * @property string $target_unit_id database column
- * @property string $structural_elements_map database column
- * @property string $container_map database column
- * @property string $blocks_map database column
- * @property string $target_folder_id database column
- * @property string $vips_map database column
- * @property string $status database column
- * @property bool $active database column
- * @property bool $auto_sync database column
+ * @package   CoursewareFlow\Models
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ *
+ * @property int $id
+ * @property string $source_course_id
+ * @property int $source_unit_id
+ * @property string $target_course_id
+ * @property int $target_unit_id
+ * @property string $structural_elements_map
+ * @property string $structural_elements_image_map
+ * @property string $container_map
+ * @property string $blocks_map
+ * @property string $folders_map
+ * @property string $files_map
+ * @property string|null $target_folder_id
+ * @property string $vips_map
+ * @property string $status
+ * @property bool $active
+ * @property bool $auto_sync
+ * @property int $sync_date
  * 
+ * belongs_to objects:
+ * @property \Course $source_course
+ * @property \Course $target_course
+ * @property \Courseware\Unit $source_unit
+ * @property \Courseware\Unit $target_unit
+ * @property \Folder $target_folder
  */
+
 class Flow extends SimpleORMap
 {
     public const STATUS_IDLE = 'idle';

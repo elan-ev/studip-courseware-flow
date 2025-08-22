@@ -1,4 +1,17 @@
 <?php
+/**
+ * Routes Trait
+ *
+ * Registriert alle JSON-API-Routen für Courseware-Flows.
+ * Unterteilt in authentifizierte und nicht authentifizierte Routen.
+ *
+ * @package   CoursewareFlow\JsonApi
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi;
 

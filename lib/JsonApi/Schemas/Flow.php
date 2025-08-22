@@ -1,4 +1,18 @@
 <?php
+/**
+ * Flow Schema
+ *
+ * JSON-API-Schema für Courseware-Flows.
+ * Definiert Typ, Attribute und Beziehungen für Flows zwischen Courseware-Units und -Kursen.
+ *
+ * @package   CoursewareFlow\JsonApi\Schemas
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
+
 namespace CoursewareFlow\JsonApi\Schemas;
 
 use Neomerx\JsonApi\Contracts\Schema\ContextInterface;

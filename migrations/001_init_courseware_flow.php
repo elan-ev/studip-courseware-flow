@@ -1,5 +1,16 @@
 <?php
-
+/**
+ * InitCoursewareFlow
+ *
+ * Migration zur Erstellung der Tabelle `cw_flow`, die Flows von Courseware-Einheiten
+ * zwischen Kursen abbildet.
+ *
+ * @package   CoursewareFlow
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ */
 final class InitCoursewareFlow extends Migration
 {
     public function up()

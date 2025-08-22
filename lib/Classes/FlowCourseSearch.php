@@ -1,4 +1,17 @@
 <?php
+/**
+ * FlowCourseSearch
+ *
+ * Klasse für die Suche nach Veranstaltungen im CoursewareFlow-Plugin.
+ * Führt unterschiedliche SQL-Abfragen aus, abhängig von den Berechtigungen des Benutzers.
+ *
+ * @package   CoursewareFlow\Classes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\Classes;
 

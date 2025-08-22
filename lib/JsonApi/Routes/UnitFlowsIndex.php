@@ -1,4 +1,18 @@
 <?php
+/**
+ * UnitFlowsIndex
+ *
+ * JSON-API-Route zum Auflisten aller Flows einer bestimmten Courseware-Unit.
+ * Unterstützt Paging und optionale Inclusion von zugehörigen Units.
+ * Prüft Berechtigungen des Benutzers und liefert die paginierten Ergebnisse zurück.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

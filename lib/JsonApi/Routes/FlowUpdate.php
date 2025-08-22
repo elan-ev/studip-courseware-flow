@@ -1,4 +1,18 @@
 <?php
+/**
+ * FlowUpdate
+ *
+ * JSON-API-Route zum Aktualisieren eines bestehenden Flows. 
+ * Ermöglicht das Ändern von Attributen wie `active` und `auto_sync` nach Validierung
+ * und Prüfung der Benutzerberechtigungen.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

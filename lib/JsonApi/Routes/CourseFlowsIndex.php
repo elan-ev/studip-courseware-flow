@@ -1,4 +1,17 @@
 <?php
+/**
+ * CourseFlowsIndex
+ *
+ * JSON-API-Route zum Abrufen aller Flows einer bestimmten Veranstaltung.
+ * Prüft die Berechtigungen des Benutzers und liefert paginierte Ergebnisse.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

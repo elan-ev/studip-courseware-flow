@@ -1,4 +1,17 @@
 <?php
+/**
+ * FlowSync
+ *
+ * JSON-API-Route zum Synchronisieren eines bestehenden Flows zwischen Kursen.
+ * Prüft die Berechtigungen des Benutzers und verwendet den SyncHelper, um den Flow zu aktualisieren.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

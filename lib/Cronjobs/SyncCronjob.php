@@ -1,4 +1,17 @@
 <?php 
+/**
+ * SyncCronjob
+ *
+ * Cronjob für das CoursewareFlow-Plugin, der automatisch verteilte Lernmaterialien synchronisiert.
+ * Führt alle Flows mit aktiviertem Auto-Sync aus und aktualisiert die Zielveranstaltungen.
+ *
+ * @package   CoursewareFlow
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 use CoursewareFlow\Models\Flow;
 use CoursewareFlow\Helpers\SyncHelper;

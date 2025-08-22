@@ -1,4 +1,18 @@
 <?php
+/**
+ * Authority
+ *
+ * Berechtigungsprüfungen für JSON-API-Routen im CoursewareFlow-Modul.
+ * Diese Klasse stellt Methoden bereit, um zu prüfen, ob ein Benutzer
+ * bestimmte Aktionen auf Flows oder Einheiten durchführen darf.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 
@@ -11,31 +25,26 @@ class Authority
 
     public static function canIndexUnitFlows($user, $course) : Bool
     {
-        //TODO: wer darf alles Flows anlegen und sehen?
         return self::canCreateFlow($user, $course);
     }
 
     public static function canIndexCourseFlows($user, $course) : Bool
     {
-        //TODO: wer darf alles Flows anlegen und sehen?
         return self::canCreateFlow($user, $course);
     }
 
     public static function canShowFlow($user, $flow) : Bool
     {
-        //TODO: wer darf alles Flows anlegen und sehen?
         return $GLOBALS['perm']->have_studip_perm('tutor', $flow->source_course_id, $user->id);
     }
 
     public static function canCreateFlow($user, $course) : Bool
     {
-        //TODO: wer darf alles Flows anlegen und sehen?
         return $GLOBALS['perm']->have_studip_perm('tutor', $course->id, $user->id);
     }
 
     public static function canUpdateFlow($user, $flow) : Bool
     {
-        //TODO: wer darf alles Flows anlegen und sehen?
         return self::canCreateFlow($user, $flow->source_course);
     }
 

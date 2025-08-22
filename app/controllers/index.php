@@ -1,4 +1,17 @@
 <?php
+/**
+ * IndexController
+ *
+ * Controller für die Hauptansicht von CoursewareFlow.
+ * Verwaltet die Anzeige und Initialisierung der CoursewareFlow-Funktionen in der Veranstaltung.
+ *
+ * @package   CoursewareFlow
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 class IndexController extends StudipController
 {

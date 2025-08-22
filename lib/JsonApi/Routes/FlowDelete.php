@@ -1,4 +1,18 @@
 <?php
+/**
+ * FlowDelete
+ *
+ * JSON-API-Route zum Löschen eines bestehenden Flows. 
+ * Prüft die Berechtigungen des Benutzers, validiert das Request-Dokument 
+ * und löscht optional die zugehörige Ziel-Unit, deren Dateien und VIPS-Zuweisungen.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

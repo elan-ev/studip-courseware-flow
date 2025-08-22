@@ -1,5 +1,18 @@
 <?php
-
+/**
+ * FlowCreate
+ *
+ * JSON-API-Route zum Erstellen eines neuen Flows zwischen zwei Courseware-Einheiten.
+ * Prüft die Berechtigungen des Benutzers, validiert das Request-Dokument
+ * und erstellt die Ziel-Unit mit allen zugehörigen Strukturelementen, Containern, Blocks und Dateien.
+ *
+ * @package   CoursewareFlow\JsonApi\Routes
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
 
 namespace CoursewareFlow\JsonApi\Routes;
 

@@ -1,4 +1,17 @@
 <?php
+/**
+ * CoursewareFlow
+ *
+ * Stud.IP-Plugin zum Kopieren und Synchronisieren von Courseware-Lernmaterial zwischen Veranstaltungen.
+ *
+ * @package   CoursewareFlow
+ * @since     1.0.0
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @copyright 2025 elan e.V.
+ * @license   AGPL-3.0
+ * @link      https://elan-ev.de
+ */
+
 require_once __DIR__ . '/bootstrap.php';
 
 use JsonApi\Contracts\JsonApiPlugin;

@@ -1,40 +1,50 @@
 {
     "name": "courseware-flow-lib",
     "private": true,
-    "version": "0.9.12",
+    "version": "1.0.0",
+    "author": "Ron Lucke <lucke@elan-ev.de> (elan e.V.)",
+    "contributors": [
+        "Ron Lucke <lucke@elan-ev.de> (elan e.V.)"
+    ],
+    "license": "AGPL-3.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/elan-ev/courseware-flow.git"
+    },
+    "homepage": "https://elan-ev.de",
     "type": "module",
     "files": [
-      "dist"
+        "dist"
     ],
     "main": "./dist/courseware-flow-lib.umd.cjs",
     "module": "./dist/courseware-flow-lib.js",
     "exports": {
-      ".": {
-        "import": "./dist/courseware-flow-lib.js",
-        "require": "./dist/courseware-flow-lib.umd.cjs"
-      }
+        ".": {
+            "import": "./dist/courseware-flow-lib.js",
+            "require": "./dist/courseware-flow-lib.umd.cjs"
+        }
     },
     "scripts": {
-      "dev": "vite",
-      "build": "vite build",
-      "dev-build": "vite build --mode development",
-      "preview": "vite preview",
-      "prezip": "npm install && npm run build && composer install --no-dev",
-      "zip": "zip -r studip-courseware-flow-v$npm_package_version.zip app assets lib migrations dist vendor LICENSE README.md CoursewareFlow.php bootstrap.php plugin.manifest -x '*.editorconfig' -x 'vendor/*.git*' -x '*.DS_Store'"
+        "dev": "vite",
+        "build": "vite build",
+        "dev-build": "vite build --mode development",
+        "preview": "vite preview",
+        "prezip": "npm install && npm run build && composer install --no-dev",
+        "zip": "zip -r studip-courseware-flow-v$npm_package_version.zip app assets lib migrations dist vendor LICENSE README.md CoursewareFlow.php bootstrap.php plugin.manifest -x '*.editorconfig' -x 'vendor/*.git*' -x '*.DS_Store'"
     },
     "dependencies": {
-      "vue": "^3.4.31",
-      "pinia": "^2.1.7"
+        "vue": "^3.4.31",
+        "pinia": "^2.1.7"
     },
     "devDependencies": {
-      "@ckeditor/ckeditor5-vue": "^6.0.0",
-      "@headlessui/vue": "^1.7.16",
-      "@vitejs/plugin-vue": "^4.5.2",
-      "kitsu": "^10.2.0",
-      "sass": "^1.70.0",
-      "sass-loader": "^14.0.0",
-      "vite": "^5.0.8",
-      "vue-resizable": "^2.1.7",
-      "vue3-gettext": "^3.0.0-beta.4"
+        "@ckeditor/ckeditor5-vue": "^6.0.0",
+        "@headlessui/vue": "^1.7.16",
+        "@vitejs/plugin-vue": "^4.5.2",
+        "kitsu": "^10.2.0",
+        "sass": "^1.70.0",
+        "sass-loader": "^14.0.0",
+        "vite": "^5.0.8",
+        "vue-resizable": "^2.1.7",
+        "vue3-gettext": "^3.0.0-beta.4"
     }
-  }
+}
