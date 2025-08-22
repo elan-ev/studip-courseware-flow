@@ -26,7 +26,7 @@ class IndexController extends StudipController
 
         $helpbar = Helpbar::get();
         $helpbar->addPlainText('', 
-            _('Mit CoursewareFlow können Sie Lernmaterialien in andere Veranstaltungen Verteilen. Die Lernmaterialien werden entweder automatisch oder manuell mit dem Quellmaterial synchronisiert. Bei der Verteilung werden sowohl die Dateien aus dem Dateibereich, also auch Vips Aufgaben und OpenCast Videos in die Zielveranstaltung übertragen.')
+            _('Mit CoursewareFlow können Sie Lernmaterialien in andere Veranstaltungen Verteilen. Die Lernmaterialien werden entweder automatisch oder manuell mit dem Quellmaterial synchronisiert. Bei der Verteilung werden sowohl die Dateien aus dem Dateibereich, also auch Vips Aufgaben und Opencast-Videos in die Zielveranstaltung übertragen.')
         );
         $helpbar->addPlainText('',  _('Dieses Plugin wurde vom elan e.V. entwickelt. Es steht unter der GNU Affero General Public License, Version 3. Der vollständige Quellcode ist öffentlich zugänglich im GitHub-Repository.'));
         $helpbar->addLink('GNU Affero General Public License', 'https://www.gnu.org/licenses/agpl-3.0.de.html', Icon::create('link-extern', Icon::ROLE_INFO_ALT), '_blank');
