@@ -53,7 +53,9 @@ class SyncHelper
         $source_unit = Unit::find($flow->source_unit_id);
         if (!$source_unit) {
             $messages[] = "Source unit not found";
+            $messages[] = "Deleting flow";
             $messages[] = "Ending syncUnit";
+            $flow->delete();
             echo implode(" | ", $messages) . "\n";
             return;
         }
