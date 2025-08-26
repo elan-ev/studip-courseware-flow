@@ -60,7 +60,9 @@ const {
                     </td>
                     <td>{{ unit['structural-element'].data.title }}</td>
                     <td>
-                        {{ unit.syncDate ? formatDate(unit.syncDate) : '---' }}
+                        <template v-if="unit.status !== 'copying'">
+                            {{ unit.syncDate ? formatDate(unit.syncDate) : '---' }}
+                        </template>
                     </td>
                     <td class="actions">
                         <StudipActionMenu

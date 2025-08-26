@@ -67,10 +67,13 @@ const {
                         />
                     </div>
                     <div class="meta">
-                        <p>
+                        <p v-if="unit.status !== 'copying'">
                             <strong>{{ $gettext('letzte Synchronisation') }}:</strong>
                             <br>
                             {{ unit.syncDate ? formatDate(unit.syncDate) : '---' }}
+                        </p>
+                        <p v-else>
+                            {{ $gettext('Lernmaterial wird kopiert') }}
                         </p>
                     </div>
                 </div>

@@ -73,7 +73,7 @@ class FlowCreate extends JsonApiController
             'source_unit_id' => $source_unit->id,
             'target_course_id' => $target_course->id,
             'target_unit_id' => '',
-            'status' => 'running',
+            'status' => 'copying',
             'active' => true,
             'auto_sync' => true,
         ]);

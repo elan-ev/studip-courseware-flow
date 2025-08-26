@@ -16,9 +16,9 @@ export function useFlows(emit) {
 
     const distributedUnits = computed(() =>
         units.value
-            .filter((unit) => flows.value.some((flow) => flow.source_unit.data.id === unit.id))
+            .filter((unit) => flows.value.some((flow) => flow.source_unit_id === unit.id))
             .map((unit) => {
-                const relatedFlows = flows.value.filter((flow) => flow.source_unit.data.id === unit.id);
+                const relatedFlows = flows.value.filter((flow) => flow.source_unit_id === unit.id);
     
                 const syncDate = relatedFlows.length
                     ? relatedFlows.reduce((earliest, flow) =>
@@ -28,14 +28,15 @@ export function useFlows(emit) {
     
                 return {
                     ...unit,
-                    syncDate
+                    syncDate,
+                    status: relatedFlows.some(flow => flow.status === 'copying') ? 'copying' : 'synced',
                 };
             })
     );
     
 
     const noneDistributedUnits = computed(() =>
-        units.value.filter((unit) => !flows.value.some((flow) => flow.source_unit.data.id === unit.id))
+        units.value.filter((unit) => !flows.value.some((flow) => flow.source_unit_id === unit.id))
     );
 
     const updateOpenEditDialog = (state) => {
