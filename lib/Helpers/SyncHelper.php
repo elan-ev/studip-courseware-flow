@@ -28,7 +28,7 @@ class SyncHelper
         if ($key === null || trim($key) === '' || $value === null) {
             return;
         }
-    
+
         if (!isset($map[$key])) {
             $map[$key] = $value;
         }
@@ -43,28 +43,35 @@ class SyncHelper
         $flow->sync_date = time();
         $flow->status = Flow::STATUS_IDLE;
         $flow->store();
-        
+
         return $flow;
-    } 
+    }
     public static function syncUnit(&$flow, $user): void
     {
+        $messages = ["Starting syncUnit"];
+        $messages[] = "Flow id: {$flow->id}, Source unit id: {$flow->source_unit_id}";
         $source_unit = Unit::find($flow->source_unit_id);
         if (!$source_unit) {
-            throw new \Exception('Source unit not found');
+            $messages[] = "Source unit not found";
+            $messages[] = "Ending syncUnit";
+            echo implode(" | ", $messages) . "\n";
+            return;
         }
+        $messages[] = "Target unit id: {$flow->target_unit_id}";
+        $target_unit = Unit::find($flow->target_unit_id) ?? null;
 
-        $target_unit = Unit::find($flow->target_unit_id);
-
-        if ($target_unit) {
+        if ($target_unit && $target_unit->structural_element) {
             // synchronize unit
+            $messages[] = "Synchronizing existing target unit";
             if ($target_unit->config != $source_unit->config) {
                 $target_unit->config = $source_unit->config;
                 $target_unit->store();
             }
             self::syncStructuralElementsQuantity($flow, $source_unit->structural_element, $user);
-            self::syncStructuralElements($flow, $target_unit->structural_element , $source_unit->structural_element, $user);
+            self::syncStructuralElements($flow, $target_unit->structural_element, $source_unit->structural_element, $user);
             self::cleanUpFiles($flow, $user);
         } else {
+            $messages[] = "Creating new target unit";
             $target = CopyHelper::copyUnit($user, $source_unit, $flow->target_course_id);
             $flow->target_unit_id = $target['target_unit']->id;
             $flow->status = 'idle';
@@ -76,6 +83,8 @@ class SyncHelper
             $flow->folders_map = json_encode($target['folders_map']);
             $flow->store();
         }
+        $messages[] = "Ending syncUnit";
+        echo implode(" | ", $messages) . "\n";
     }
 
     private static function syncStructuralElementsQuantity(Flow &$flow, StructuralElement $root, $user): void
@@ -87,7 +96,7 @@ class SyncHelper
         $source_structural_elements = array_merge([$root], $root->findDescendants($user));
         $flow_map = json_decode($flow->structural_elements_map, true);
         $map_changed = false;
-        foreach($source_structural_elements as $element) {
+        foreach ($source_structural_elements as $element) {
             unset($deletedElements[$element->id]);
             if (!array_key_exists($element->id, $structural_elements_map) || StructuralElement::find($structural_elements_map[$element->id]) === null) {
                 $target_parent_id = $flow_map[$element->parent_id] ?? $root->id;
@@ -99,12 +108,12 @@ class SyncHelper
         }
 
         if (sizeof($deletedElements) > 0) {
-            foreach($deletedElements as $source_element_id => $target_element_id) {
+            foreach ($deletedElements as $source_element_id => $target_element_id) {
                 $target_element = StructuralElement::find($target_element_id);
                 if ($target_element) {
                     $target_element->delete();
                 }
-                
+
                 unset($flow_map[$source_element_id]);
             }
             $map_changed = true;
@@ -118,6 +127,10 @@ class SyncHelper
 
     private static function syncStructuralElements(Flow &$flow, StructuralElement $target_element, StructuralElement $source_element, $user): void
     {
+        if ($source_element->chdate <= $flow->sync_date && $target_element->chdate <= $flow->sync_date) {
+            return;
+        }
+
         $structural_elements_image_map = json_decode($flow->structural_elements_image_map, true);
         $has_changes = false;
 
@@ -163,7 +176,7 @@ class SyncHelper
             $target_element->image_type = $source_element->image_type;
             $has_changes = true;
         }
-        
+
         self::syncContainers($flow, $source_element, $target_element, $user);
 
         if ($has_changes) {
@@ -192,9 +205,12 @@ class SyncHelper
 
         foreach ($source_element->containers as $container) {
             $target_container = Container::find($flow->container_map[$container->id]);
-            if ($target_container) { 
+            if ($container->chdate <= $flow->sync_date && $target_container->chdate <= $flow->sync_date) {
+                continue;
+            }
+            if ($target_container) {
                 $deletable_containers = array_diff($deletable_containers, [$target_container->id]);
-                
+
                 self::syncContainerAttributes($flow, $target_container, $container, $user);
             } else {
                 CopyHelper::copyContainer($user, $target_element, $container, $container_map, $blocks_map, $files_map, $folders_map, $vips_map, $has_oc_block);
@@ -231,24 +247,28 @@ class SyncHelper
         $source_blocks = [];
         $target_blocks = [];
         foreach ($source_containers as $source_container) {
-            $source_blocks = array_merge($source_blocks,  Block::findBySQL('container_id = ?', [$source_container->id]));
+            $source_blocks = array_merge($source_blocks, Block::findBySQL('container_id = ?', [$source_container->id]));
         }
         foreach ($target_containers as $target_container) {
-            $target_blocks = array_merge($target_blocks,  Block::findBySQL('container_id = ?', [$target_container->id]));
+            $target_blocks = array_merge($target_blocks, Block::findBySQL('container_id = ?', [$target_container->id]));
         }
         $deletable_blocks = array_column($target_blocks, 'id');
 
-        foreach($source_blocks as $block) {
-            $target_block_id = $flow->blocks_map[$block->id];
-            $target_block = Block::find($target_block_id);
-            
-            if ($target_block_id && $target_block) {
+        foreach ($source_blocks as $block) {
+            $target_block_id = $flow->blocks_map[$block->id] ?? null;
+            $target_block = $target_block_id ? Block::find($target_block_id) : null;
+
+            if ($target_block && $block->chdate <= $flow->sync_date && $target_block->chdate <= $flow->sync_date) {
+                continue;
+            }
+
+            if ($target_block) {
                 $deletable_blocks = array_diff($deletable_blocks, [$target_block_id]);
                 self::syncBlock($flow, $user, $target_block, $block, $files_map, $folders_map, $map_changed);
             } else {
                 $target_container = Container::find($flow->container_map[$block->container_id]);
                 if ($target_container) {
-                    CopyHelper::copyBlock($user, $target_container, $block,  $blocks_map, $files_map, $folders_map);
+                    CopyHelper::copyBlock($user, $target_container, $block, $blocks_map, $files_map, $folders_map);
                     $map_changed = true;
                 }
             }
@@ -272,17 +292,30 @@ class SyncHelper
 
     private static function syncContainerAttributes(Flow $flow, Container $target_container, Container $source_container, $user): void
     {
-        $target_container->position = $source_container->position;
+        $has_changes = false;
+
+        if ($target_container->position !== $source_container->position) {
+            $target_container->position = $source_container->position;
+            $has_changes = true;
+        }
 
         $source_payload = json_decode($source_container->payload, true);
         $target_payload = json_decode($target_container->payload, true);
+
         // sync settings
-        $target_payload['colspan'] = $source_payload['colspan'];
-        
+        if ($target_payload['colspan'] !== $source_payload['colspan']) {
+            $target_payload['colspan'] = $source_payload['colspan'];
+            $has_changes = true;
+        }
+
         // sync sections use block_map
         foreach ($source_payload['sections'] as $index => $section) {
-            $target_payload['sections'][$index]['name'] = $section['name'];
-            $target_payload['sections'][$index]['icon'] = $section['icon'];
+            foreach (['name', 'icon'] as $key) {
+                if ($target_payload['sections'][$index][$key] !== $section[$key]) {
+                    $target_payload['sections'][$index][$key] = $section[$key];
+                    $has_changes = true;
+                }
+            }
 
             $target_block_list = [];
             foreach ($section['blocks'] as $block_id) {
@@ -291,21 +324,35 @@ class SyncHelper
                     $target_block_list[] = $target_block->id;
                 }
             }
-            $target_payload['sections'][$index]['blocks'] = $target_block_list;
+            if ($target_payload['sections'][$index]['blocks'] !== $target_block_list) {
+                $target_payload['sections'][$index]['blocks'] = $target_block_list;
+                $has_changes = true;
+            }
         }
 
-        // store target container
-        $target_container->payload = json_encode($target_payload);
-        $target_container->store();
+        // store target container if source has changes
+        if ($has_changes) {
+            $target_container->payload = json_encode($target_payload);
+            $target_container->store();
+        }
     }
 
     private static function syncBlock(Flow &$flow, $user, Block $target_block, Block $source_block, &$files_map, &$folders_map, &$map_changed): void
     {
-        if (!$target_block ||!$source_block || $source_block->block_type === 'test') {
+        if (!$target_block || !$source_block || $source_block->block_type === 'test') {
             return;
         }
+
+        if ($source_block->chdate <= $flow->sync_date && $target_block->chdate <= $flow->sync_date) {
+            return;
+        }
+
         $source_payload = json_decode($source_block->payload, true);
         $target_payload = json_decode($target_block->payload, true);
+
+        if ($source_payload === $target_payload) {
+            return;
+        }
 
         // overwrite all payload settings
         $target_payload = $source_payload;
@@ -324,7 +371,7 @@ class SyncHelper
     private static function updateFileIds(Flow &$flow, $user, $target_payload, $source_block, &$files_map): array
     {
         $source_payload = $source_block->type->getPayload();
-    
+
         $fileKeys = [
             'audio' => ['file_id'],
             'canvas' => ['file_id'],
@@ -335,71 +382,72 @@ class SyncHelper
             'before-after' => ['before_file_id', 'after_file_id'],
             'headline' => ['background_image_id'],
         ];
-    
+
         if (isset($fileKeys[$source_block->block_type])) {
             foreach ($fileKeys[$source_block->block_type] as $key) {
                 $target_payload[$key] = self::copyOrMapFileId($flow, $user, $source_payload[$key] ?? '', $files_map);
             }
         }
-        
+
         if ($source_block->block_type === 'dialog-cards' && isset($source_payload['cards'])) {
             foreach ($source_payload['cards'] as $index => $card) {
                 $target_payload['cards'][$index]['front_file_id'] = self::copyOrMapFileId($flow, $user, $card['front_file_id'] ?? '', $files_map);
                 $target_payload['cards'][$index]['back_file_id'] = self::copyOrMapFileId($flow, $user, $card['back_file_id'] ?? '', $files_map);
             }
         }
-        
+
         if ($source_block->block_type === 'text') {
             self::updateFileIdInPayload($target_payload, $source_payload, $flow, $user, $files_map);
         }
-        
+
         return $target_payload;
     }
 
-    private static function updateFileIdInPayload(&$target_payload, $source_payload, $flow, $user, &$files_map) {
+    private static function updateFileIdInPayload(&$target_payload, $source_payload, $flow, $user, &$files_map)
+    {
         $pattern = '/file_id=([a-f0-9]+)&amp;file_name=([^"]+)/';
-        
+
         // Alle Vorkommen von file_id und file_name finden
         if (preg_match_all($pattern, $source_payload['text'], $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $source_file_id = $match[1];
                 $original_file_name = $match[2];
-    
+
                 // Neue Datei-ID holen
                 $file_obj = self::copyOrMapFileId($flow, $user, $source_file_id, $files_map);
-                
+
                 // Falls kein gültiges File-Objekt zurückkommt, überspringen
                 if (!$file_obj || !isset($file_obj->id, $file_obj->file_name)) {
                     continue;
                 }
-    
+
                 // Ersetzte Datei-ID und Dateiname
                 $new_string = 'file_id=' . $file_obj->id . '&amp;file_name=' . htmlspecialchars($file_obj->file_name, ENT_QUOTES);
-    
+
                 // Im String ersetzen
                 $target_payload['text'] = str_replace($match[0], $new_string, $target_payload['text']);
             }
         }
     }
-    
-    
+
+
     private static function copyOrMapFileId(Flow &$flow, $user, $source_file_id, &$files_map): string
     {
         if (isset($files_map[$source_file_id])) {
             return $files_map[$source_file_id];
         }
-        
+
         if ($source_file_id !== '') {
             $copied_file_id = self::copyFileById($flow, $user, $source_file_id);
             self::addToMap($files_map, $source_file_id, $copied_file_id);
             return $copied_file_id;
         }
-        
+
         return '';
     }
-    
 
-    private static function updateFolderIds(Flow &$flow, $user, $target_payload, $source_block, &$folders_map): Array
+
+    private static function updateFolderIds(Flow &$flow, $user, $target_payload, $source_block, &$folders_map): array
     {
         $source_payload = $source_block->type->getPayload();
 
@@ -411,7 +459,7 @@ class SyncHelper
                     self::syncTargetFolder($user, $target_payload['folder_id'], $source_payload['folder_id']);
                 } else {
                     if ($source_payload['folder_id'] !== '') {
-                        $target_payload['folder_id'] = self::copyFolderById($flow, $user,  $source_payload['folder_id']);
+                        $target_payload['folder_id'] = self::copyFolderById($flow, $user, $source_payload['folder_id']);
                     } else {
                         $target_payload['folder_id'] = '';
                     }
@@ -422,7 +470,7 @@ class SyncHelper
         return $target_payload;
     }
 
-        /**
+    /**
      * Copies a file to a specified range.
      *
      * @param string $fileId  the ID of the file
@@ -513,7 +561,7 @@ class SyncHelper
     private static function cleanUpFiles($flow, $user)
     {
         $rootFolder = \Folder::findTopFolder($flow->target_course_id);
-        $destinationFolderName = 'Courseware Import '.date('d.m.Y', time());
+        $destinationFolderName = 'Courseware Import ' . date('d.m.Y', time());
         $destinationFolder = \Folder::findOneBySQL(
             'parent_id = ? AND name = ?',
             [$rootFolder->id, $destinationFolderName]
