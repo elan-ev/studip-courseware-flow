@@ -120,7 +120,7 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
 
     async function deleteFlow(flow, withUnit = false) {
         if (!flow.id) return;
-        const unitId = flow.source_unit.data.id;
+        const unitId = flow.source_unit_id;
         inProgress.value = true;
         api.post(`courseware-flows/${flow.id}/delete`, {
             'with-unit': withUnit,
@@ -139,7 +139,7 @@ export const useFlowsStore = defineStore('courseware-flows', () => {
             })
             .then(() => {
                 records.value.forEach((record) => {
-                    if (record.source_unit.data.id === unitId) {
+                    if (record.source_unit_id === unitId) {
                         records.value.delete(record.id);
                     }
                     unitsStore.fetchById(unitId);
