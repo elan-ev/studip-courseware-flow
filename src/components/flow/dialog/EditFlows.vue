@@ -34,7 +34,7 @@ const currentUnit = computed(() => contextStore.selectedUnit);
 const currentFlow = computed(() => contextStore.selectedFlow);
 const unitFlows = computed(() => {
     return flowsStore.all
-        .filter((flow) => flow.source_unit.data.id === currentUnit.value?.id)
+        .filter((flow) => flow.source_unit_id === currentUnit.value?.id)
         .map((flow) => ({
             ...flow,
             target_course: {
@@ -48,7 +48,7 @@ const fetchCourses = async () => {
     if (!currentUnit.value) {
         return;
     }
-    const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit.data.id === currentUnit.value.id);
+    const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit_id === currentUnit.value.id);
 
     updateExcludedCourses();
 
@@ -58,7 +58,7 @@ const fetchCourses = async () => {
 };
 
 const updateExcludedCourses = () => {
-    const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit.data.id === currentUnit.value.id);
+    const relevantFlows = flowsStore.all.filter((flow) => flow.source_unit_id === currentUnit.value.id);
 
     excludedCourses.value = [...relevantFlows.map((flow) => flow.target_course.data.id), contextStore.cid];
 };
