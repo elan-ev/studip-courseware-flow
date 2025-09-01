@@ -218,7 +218,7 @@ class CopyHelper
                 'edit_blocker_id' => null,
                 'title' => $child->title,
                 'purpose' => $child->purpose,
-                'position' => 0,
+                'position' => $child->position,
                 'payload' => $child->payload,
                 'commentable' => 0,
                 'image_id' => $image_id,
