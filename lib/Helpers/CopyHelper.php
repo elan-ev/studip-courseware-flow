@@ -30,9 +30,7 @@ class CopyHelper
             return;
         }
 
-        if (!isset($map[$key])) {
-            $map[$key] = $value;
-        }
+        $map[$key] = $value;
     }
 
     public static function copyUnit($user, $source_unit, $target_course_id): array

@@ -131,54 +131,54 @@ class SyncHelper
 
     private static function syncStructuralElements(Flow &$flow, StructuralElement $target_element, StructuralElement $source_element, $user): void
     {
-        if ($source_element->chdate <= $flow->sync_date && $target_element->chdate <= $flow->sync_date) {
-            return;
-        }
-
-        $structural_elements_image_map = json_decode($flow->structural_elements_image_map, true);
         $has_changes = false;
+        if (!($source_element->chdate <= $flow->sync_date && $target_element->chdate <= $flow->sync_date)) {
+            $structural_elements_image_map = json_decode($flow->structural_elements_image_map, true);
 
-        $fields = ['commentable', 'position', 'purpose', 'title', 'release_date', 'withdraw_date'];
 
-        foreach ($fields as $field) {
-            if (isset($source_element->$field) && isset($target_element->$field) && $source_element->$field !== $target_element->$field) {
-                $target_element->$field = $source_element->$field;
+            $fields = ['commentable', 'position', 'purpose', 'title', 'release_date', 'withdraw_date'];
+
+            foreach ($fields as $field) {
+                if (isset($source_element->$field) && isset($target_element->$field) && $source_element->$field !== $target_element->$field) {
+                    $target_element->$field = $source_element->$field;
+                    $has_changes = true;
+                }
+            }
+
+            if ($source_element->payload != $target_element->payload) {
+                $target_element->payload = $source_element->payload;
                 $has_changes = true;
             }
-        }
 
-        if ($source_element->payload != $target_element->payload) {
-            $target_element->payload = $source_element->payload;
-            $has_changes = true;
-        }
+            $target_element_parent_id_by_source = $flow->structural_elements_map[$source_element->parent_id];
 
-        $target_element_parent_id_by_source = $flow->structural_elements_map[$source_element->parent_id];
+            if ($target_element_parent_id_by_source !== $target_element->parent_id) {
+                $parent = StructuralElement::find($target_element_parent_id_by_source);
+                if ($parent) {
+                    $target_element->parent_id = $parent->id;
+                    $has_changes = true;
+                } else {
+                    echo "Parent structural element not found for element id {$source_element->id}\n";
+                    return;
+                }
+            }
 
-        if ($target_element_parent_id_by_source !== $target_element->parent_id) {
-            $parent = StructuralElement::find($target_element_parent_id_by_source);
-            if ($parent) {
-                $target_element->parent_id = $parent->id;
-                $has_changes = true;
+            // sync structural element image
+            if ($source_element->image_id) {
+                if (!array_key_exists($source_element->image_id, $structural_elements_image_map) || $structural_elements_image_map[$source_element->image_id] != $target_element->image_id) {
+                    $target_element->image_id = CopyHelper::copyStructuralElementImage($user, $source_element, $target_element);
+                    self::addToMap($structural_elements_image_map, $source_element->image_id, $target_element->image_id);
+                    $has_changes = true;
+                }
             } else {
-                throw new \Exception('Parent structural element not found');
-            }
-        }
-
-        // sync structural element image
-        if ($source_element->image_id) {
-            if (!array_key_exists($source_element->image_id, $structural_elements_image_map) || $structural_elements_image_map[$source_element->image_id] != $target_element->image_id) {
-                $target_element->image_id = CopyHelper::copyStructuralElementImage($user, $source_element, $target_element);
-                self::addToMap($structural_elements_image_map, $source_element->image_id, $target_element->image_id);
+                $target_element->image_id = null;
                 $has_changes = true;
             }
-        } else {
-            $target_element->image_id = null;
-            $has_changes = true;
-        }
 
-        if ($target_element->image_type !== $source_element->image_type) {
-            $target_element->image_type = $source_element->image_type;
-            $has_changes = true;
+            if ($target_element->image_type !== $source_element->image_type) {
+                $target_element->image_type = $source_element->image_type;
+                $has_changes = true;
+            }
         }
 
         self::syncContainers($flow, $source_element, $target_element, $user);
@@ -199,24 +199,20 @@ class SyncHelper
 
     private static function syncContainers(&$flow, $source_element, $target_element, $user): void
     {
-        $deletable_containers = array_column($target_element->containers->toArray(), 'id');
-        $container_map = json_decode($flow->container_map, true);
-        $blocks_map = json_decode($flow->blocks_map, true);
-        $files_map = json_decode($flow->files_map, true);
-        $folders_map = json_decode($flow->folders_map, true);
-        $vips_map = json_decode($flow->vips_map, true);
+        $container_map = json_decode($flow->container_map, true) ?: [];
+        $blocks_map = json_decode($flow->blocks_map, true) ?: [];
+        $files_map = json_decode($flow->files_map, true) ?: [];
+        $folders_map = json_decode($flow->folders_map, true) ?: [];
+        $vips_map = json_decode($flow->vips_map, true) ?: [];
+
+        $deletable_containers = array_map('strval', array_column($target_element->containers->toArray(), 'id'));
         $has_oc_block = false;
 
         foreach ($source_element->containers as $container) {
-            $target_container = Container::find($flow->container_map[$container->id]);
-            if ($container->chdate <= $flow->sync_date && $target_container->chdate <= $flow->sync_date) {
-                continue;
-            }
-            if ($target_container) {
-                $deletable_containers = array_diff($deletable_containers, [$target_container->id]);
-
-                self::syncContainerAttributes($flow, $target_container, $container, $user);
-            } else {
+            $sourceId = (string) $container->id;
+            $mappedTargetId = $container_map[$sourceId] ?? null;
+            $target_container = $mappedTargetId ? Container::find($mappedTargetId) : null;
+            if (!$target_container) {
                 CopyHelper::copyContainer($user, $target_element, $container, $container_map, $blocks_map, $files_map, $folders_map, $vips_map, $has_oc_block);
                 $flow->container_map = json_encode($container_map);
                 $flow->blocks_map = json_encode($blocks_map);
@@ -224,15 +220,22 @@ class SyncHelper
                 $flow->folders_map = json_encode($folders_map);
                 $flow->vips_map = json_encode($vips_map);
                 $flow->store();
+
+                continue;
+            } else {
+                $deletable_containers = array_diff($deletable_containers, [(string) $target_container->id]);
+
+                if ($container->chdate <= $flow->sync_date && $target_container->chdate <= $flow->sync_date) {
+                    continue;
+                }
+
+                self::syncContainerAttributes($flow, $target_container, $container, $user);
             }
         }
-
-        if (sizeof($deletable_containers) > 0) {
-            foreach ($deletable_containers as $container_id) {
-                $container = Container::find($container_id);
-                if ($container) {
-                    $container->delete();
-                }
+        foreach ($deletable_containers as $container_id) {
+            $container = Container::find((int) $container_id);
+            if ($container) {
+                $container->delete();
             }
         }
         self::syncBlocksQuantity($flow, $source_element, $target_element, $user);
@@ -243,9 +246,10 @@ class SyncHelper
         $source_containers = $source_element->containers;
         $target_containers = $target_element->containers;
 
-        $blocks_map = json_decode($flow->blocks_map, true);
-        $files_map = json_decode($flow->files_map, true);
-        $folders_map = json_decode($flow->folders_map, true);
+        $blocks_map = json_decode($flow->blocks_map, true) ?: [];
+        $files_map = json_decode($flow->files_map, true) ?: [];
+        $folders_map = json_decode($flow->folders_map, true) ?: [];
+        $container_map = json_decode($flow->container_map, true) ?: [];
         $map_changed = false;
 
         $source_blocks = [];
@@ -256,21 +260,24 @@ class SyncHelper
         foreach ($target_containers as $target_container) {
             $target_blocks = array_merge($target_blocks, Block::findBySQL('container_id = ?', [$target_container->id]));
         }
-        $deletable_blocks = array_column($target_blocks, 'id');
+        $deletable_blocks = array_map('strval', array_column($target_blocks, 'id'));
 
         foreach ($source_blocks as $block) {
-            $target_block_id = $flow->blocks_map[$block->id] ?? null;
+            $block_id = (string) $block->id;
+            $target_block_id = $blocks_map[$block_id] ?? null;
             $target_block = $target_block_id ? Block::find($target_block_id) : null;
 
-            if ($target_block && $block->chdate <= $flow->sync_date && $target_block->chdate <= $flow->sync_date) {
-                continue;
-            }
-
             if ($target_block) {
-                $deletable_blocks = array_diff($deletable_blocks, [$target_block_id]);
+                $deletable_blocks = array_diff($deletable_blocks, [(string) $target_block_id]);
+
+                if ($target_block && $block->chdate <= $flow->sync_date && $target_block->chdate <= $flow->sync_date) {
+                    continue;
+                }
+
                 self::syncBlock($flow, $user, $target_block, $block, $files_map, $folders_map, $map_changed);
             } else {
-                $target_container = Container::find($flow->container_map[$block->container_id]);
+                $target_container_id = $container_map[$block->container_id] ?? null;
+                $target_container = $target_container_id ? Container::find($target_container_id) : null;
                 if ($target_container) {
                     CopyHelper::copyBlock($user, $target_container, $block, $blocks_map, $files_map, $folders_map);
                     $map_changed = true;
@@ -307,7 +314,7 @@ class SyncHelper
         $target_payload = json_decode($target_container->payload, true);
 
         // sync settings
-        if ($target_payload['colspan'] !== $source_payload['colspan']) {
+        if (($target_payload['colspan'] ?? null) !== ($source_payload['colspan'] ?? null)) {
             $target_payload['colspan'] = $source_payload['colspan'];
             $has_changes = true;
         }
