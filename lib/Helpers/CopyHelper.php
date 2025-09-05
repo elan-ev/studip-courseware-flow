@@ -12,7 +12,7 @@
  * @license   AGPL-3.0
  * @link      https://elan-ev.de
  * 
- * @modified 1.0.1 by Ron Lucke <lucke@elan-ev.de>
+ * @modified 1.0.2 by Ron Lucke <lucke@elan-ev.de>
  */
 
 namespace CoursewareFlow\Helpers;

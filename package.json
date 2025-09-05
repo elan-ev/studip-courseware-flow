@@ -1,7 +1,7 @@
 {
     "name": "courseware-flow-lib",
     "private": true,
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": "Ron Lucke <lucke@elan-ev.de> (elan e.V.)",
     "contributors": [
         "Ron Lucke <lucke@elan-ev.de> (elan e.V.)"
