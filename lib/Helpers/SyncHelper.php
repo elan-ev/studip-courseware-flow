@@ -225,10 +225,6 @@ class SyncHelper
             } else {
                 $deletable_containers = array_diff($deletable_containers, [(string) $target_container->id]);
 
-                if ($container->chdate <= $flow->sync_date && $target_container->chdate <= $flow->sync_date) {
-                    continue;
-                }
-
                 self::syncContainerAttributes($flow, $target_container, $container, $user);
             }
         }
