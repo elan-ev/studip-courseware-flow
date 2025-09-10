@@ -35,12 +35,16 @@ class SyncHelper
             $map[$key] = $value;
         }
     }
-    public static function syncFlow(Flow $flow, $user): Flow
+    public static function syncFlow(Flow $flow, $user): ?Flow
     {
         $flow->status = Flow::STATUS_SYNCING;
         $flow->store();
 
-        self::syncUnit($flow, $user);
+        $unit_sync = self::syncUnit($flow, $user);
+
+        if (!$unit_sync) {
+            return null;
+        }
 
         $flow->sync_date = time();
         $flow->status = Flow::STATUS_IDLE;
@@ -48,7 +52,7 @@ class SyncHelper
 
         return $flow;
     }
-    public static function syncUnit(&$flow, $user): void
+    public static function syncUnit(&$flow, $user): bool
     {
         $messages = ["Starting syncUnit"];
         $messages[] = "Flow id: {$flow->id}, Source unit id: {$flow->source_unit_id}";
@@ -59,7 +63,7 @@ class SyncHelper
             $messages[] = "Ending syncUnit";
             $flow->delete();
             echo implode(" | ", $messages) . "\n";
-            return;
+            return false;
         }
         $messages[] = "Target unit id: {$flow->target_unit_id}";
         $target_unit = Unit::find($flow->target_unit_id) ?? null;
@@ -89,6 +93,8 @@ class SyncHelper
         }
         $messages[] = "Ending syncUnit";
         echo implode(" | ", $messages) . "\n";
+
+        return true;
     }
 
     private static function syncStructuralElementsQuantity(Flow &$flow, StructuralElement $root, $user): void
