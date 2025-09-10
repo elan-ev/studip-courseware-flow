@@ -12,7 +12,7 @@
  * @license   AGPL-3.0
  * @link      https://elan-ev.de
  * 
- * @modified 1.0.2 by Ron Lucke <lucke@elan-ev.de>
+ * @modified 1.0.3 by Ron Lucke <lucke@elan-ev.de>
  */
 
 namespace CoursewareFlow\Helpers;
@@ -53,6 +53,9 @@ class CopyHelper
         $target_data['target_unit'] = $target_unit;
 
         $plugin_manager = \PluginManager::getInstance();
+
+        $courseware = $plugin_manager->getPlugin('CoursewareModule');
+        $plugin_manager->setPluginActivated($courseware->getPluginId(), $target_course_id, true);
 
         if (sizeof($target_data['vips_map']) > 0) {
             $plugin_vips = $plugin_manager->getPlugin('VipsPlugin');
@@ -109,8 +112,6 @@ class CopyHelper
             $source_unit_structural_element->store();
         }
 
-        $image_id = self::copyStructuralElementImage($user, $source_unit_structural_element, $target_course_id);
-
         $target_unit_structural_element = StructuralElement::build([
             'parent_id' => null,
             'range_id' => $target_course_id,
@@ -122,9 +123,7 @@ class CopyHelper
             'purpose' => $source_unit_structural_element->purpose,
             'position' => 0,
             'payload' => $source_unit_structural_element->payload,
-            'commentable' => 0,
-            'image_id' => $image_id,
-            'image_type' => $source_unit_structural_element->image_type
+            'commentable' => 0
         ]);
 
         $target_unit_structural_element->store();
@@ -138,10 +137,15 @@ class CopyHelper
         $vips_map = [];
         $has_oc_block = false;
 
+        self::addToMap($structural_elements_map, $source_unit_structural_element->id, $target_unit_structural_element->id);
+
+        $image_id = self::copyStructuralElementImage($user, $source_unit_structural_element, $target_unit_structural_element);
         if ($image_id) {
+            $target_unit_structural_element->image_id = $image_id;
+            $target_unit_structural_element->image_type = $source_unit_structural_element->image_type;
+            $target_unit_structural_element->store();
             self::addToMap($structural_elements_image_map, $source_unit_structural_element->image_id, $target_unit_structural_element->image_id);
         }
-        self::addToMap($structural_elements_map, $source_unit_structural_element->id, $target_unit_structural_element->id);
 
         self::copyContainers($user, $target_unit_structural_element, $source_unit_structural_element, $container_map, $blocks_map, $files_map, $folders_map, $vips_map, $has_oc_block);
         self::copyChildren($user, $target_unit_structural_element, $source_unit_structural_element, $structural_elements_map, $structural_elements_image_map, $container_map, $blocks_map, $files_map, $folders_map, $vips_map, $has_oc_block);
@@ -178,7 +182,7 @@ class CopyHelper
 
 
 
-    public static function copyStructuralElementImage(\User $user, StructuralElement $source, String $target_range_id): ?string
+    public static function copyStructuralElementImage(\User $user, StructuralElement $source, StructuralElement $target): ?string
     {
         if ($source->image_type === \StockImage::class) {
             return $source->image_id;
@@ -190,7 +194,7 @@ class CopyHelper
             /** @var ?\FileRef $original_file_ref */
             $original_file_ref = \FileRef::find($source->image_id);
             if ($original_file_ref) {
-                $instance = new \Courseware\Instance(\Courseware\StructuralElement::getCoursewareCourse($target_range_id));
+                $instance = new \Courseware\Instance(\Courseware\StructuralElement::getCoursewareCourse($target->range_id));
                 $folder = \Courseware\Filesystem\PublicFolder::findOrCreateTopFolder($instance);
                 /** @var \FileRef $file_ref */
                 $file_ref = \FileManager::copyFile($original_file_ref->getFileType(), $folder, $user);
@@ -207,8 +211,6 @@ class CopyHelper
     {
 
         foreach ($source->children as $child) {
-            $image_id = self::copyStructuralElementImage($user, $child, $parent->range_id);
-
             $new_child = StructuralElement::build([
                 'parent_id' => $parent->id,
                 'range_id' => $parent->range_id,
@@ -225,10 +227,15 @@ class CopyHelper
                 'image_type' => $child->image_type
             ]);
             $new_child->store();
+            self::addToMap($structural_elements_map, $child->id, $new_child->id);
+
+            $image_id = self::copyStructuralElementImage($user, $child, $new_child);
             if ($image_id) {
+                $new_child->image_id = $image_id;
+                $new_child->image_type = $child->image_type;
+                $new_child->store();
                 self::addToMap($structural_elements_image_map, $child->image_id, $new_child->image_id);
             }
-            self::addToMap($structural_elements_map, $child->id, $new_child->id);
 
             self::copyChildren($user, $new_child, $child, $structural_elements_map, $structural_elements_image_map, $container_map, $blocks_map, $files_map, $folders_map, $vips_map, $has_oc_block);
             self::copyContainers($user, $new_child, $child, $container_map, $blocks_map, $files_map, $folders_map, $vips_map, $has_oc_block);
